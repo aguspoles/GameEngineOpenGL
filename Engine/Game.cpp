@@ -6,8 +6,10 @@
 
 bool Game::isRunning = true;
 
-Game::Game()
+Game::Game() : _frameCounter(0), _frames(0), _timeSinceLastUpdate(0)
 {
+	_timePerFrame = 1.0f / FRAME_CAP;//time to render 1 frame
+	_fpsCapped = true;
 }
 
 Game::~Game()
@@ -54,8 +56,6 @@ void Game::Run()
 {
 	Init();
 
-	_timePerFrame = 1.0f / FRAME_CAP;//time to render 1 frame
-	_fpsCapped = false;
 	_lastFrameTime = Time::GetTime();
 
 	while (!glfwWindowShouldClose(Display::window))
@@ -83,7 +83,7 @@ void Game::Run()
 			Root.Update();
 		}
 		if (_frameCounter >= Time::SECOND) {
-			//cout << "FPS:" << _frames << endl;
+			cout << "FPS:" << _frames << endl;
 			_frames = 0;
 			_frameCounter = 0;
 		}

@@ -84,19 +84,17 @@ void Application::Init() {
 	Model* nanosuit = new Model("../res/nanosuit/nanosuit.obj");
 	Shader* phongShader = new Shader("../res/lightShader.vs", "../res/lightShader.fs");
 	Shader* basicShader = new Shader("../res/lightSource.vs", "../res/lightSource.fs");
-	/*Texture* texture1 = new Texture("../res/bricks.jpg");
-	Texture* texture2 = new Texture("../res/mini.jpg");*/
 
 	Player* player = new Player;
 	player->SetModel(nanosuit);
 	player->SetShader(phongShader);
+	//test bounding box
+	BoundingBox* bb = player->transform->GetBoundingBox();
 
 	light = new Light(lightVertices, lightIndices);
 	light->SetShader(basicShader);
 	light->Color = glm::vec3(1.0, 0, 0);
 
-	/*AddTexture(texture1);
-	AddTexture(texture2);*/
 	AddShader(phongShader);
 	AddShader(basicShader);
 	AddModel(nanosuit);

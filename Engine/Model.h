@@ -11,6 +11,7 @@
 
 #include "Mesh.h"
 #include "Shader.h"
+#include "BoundingBox.h"
 
 #include <string>
 #include <fstream>
@@ -35,7 +36,10 @@ public:
 	// draws the model, and thus all its meshes
 	void Draw(Shader shader);
 
+	BoundingBox GetBoundingBox();
+
 private:
+	BoundingBox _bb;
 	/*  Functions   */
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	void loadModel(string const &path);

@@ -32,26 +32,29 @@ public:
 	glm::vec3 GetWorldRotation();
 	vector<Component*> GetComponents();
 
+	void RecalculateBB(Component* childComponent);
 protected:
 	virtual void InitComposite();
 	virtual void UpdateComposite();
 	virtual void RenderComposite(glm::mat4 tempMatrix);
 private:
-	vector<Component*> m_components;
+	vector<Component*> _components;
 	glm::mat4 m_modelMatrix;
 	glm::vec3 m_worldPosition;
 	glm::vec3 m_worldRotation;
 
 	template<class T> void GetComponentsInParent(vector<T*>*);
 	template<class T> void GetComponentsInChildren(vector<T*>*);
+
+	void RemoveBB(Component* childComponent);
 };
 
 template<class T>
 inline T* Composite::GetComponent()
 {
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		T* comp = dynamic_cast<T*>(m_components[i]);
+		T* comp = dynamic_cast<T*>(_components[i]);
 		if (comp != nullptr) return comp;
 	}
 
@@ -62,9 +65,9 @@ template<class T>
 inline vector<T*> Composite::GetComponents()
 {
 	vector<T*> res;
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		T* comp = dynamic_cast<T*>(m_components[i]);
+		T* comp = dynamic_cast<T*>(_components[i]);
 		if (comp != nullptr) res.push_back(comp);
 	}
 
@@ -77,9 +80,9 @@ inline T * Composite::GetComponentInChildren()
 	T* comp = dynamic_cast<T*>(this);
 	if (comp) return comp;
 
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		Component* child = m_components[i];
+		Component* child = _components[i];
 		Composite* compositeChild = dynamic_cast<Composite*>(child);
 		if (compositeChild)
 		{

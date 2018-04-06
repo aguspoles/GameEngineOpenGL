@@ -12,6 +12,11 @@ void Model::Draw(Shader shader)
 		meshes[i].Draw(shader);
 }
 
+BoundingBox Model::GetBoundingBox()
+{
+	return _bb;
+}
+
 void Model::loadModel(string const & path)
 {
 	// read file via ASSIMP
@@ -65,6 +70,16 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		vector.y = mesh->mVertices[i].y;
 		vector.z = mesh->mVertices[i].z;
 		vertex.Position = vector;
+		//set model bounding box
+		_bb.xMin = min(vector.x, _bb.xMin);
+		_bb.yMin = min(vector.y, _bb.yMin);
+		_bb.zMin = min(vector.z, _bb.zMin);
+
+		_bb.xMax = max(vector.x, _bb.xMax);
+		_bb.yMax = max(vector.y, _bb.yMax);
+		_bb.zMax = max(vector.z, _bb.zMax);
+		_bb.Refresh();
+		//-----------------------------------------------------
 		// normals
 		vector.x = mesh->mNormals[i].x;
 		vector.y = mesh->mNormals[i].y;

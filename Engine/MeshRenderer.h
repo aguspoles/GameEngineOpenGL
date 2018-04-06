@@ -21,6 +21,7 @@ public:
 	void SetModel(Model* model);
 
 	Shader* GetShader();
+	Model* GetModel();
 
 protected:
 	Model* m_model;

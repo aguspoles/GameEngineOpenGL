@@ -24,8 +24,6 @@ void Player::UpdateComposite()
 		transform->GetPos()->x += 5 * Time::deltaTime;
 
 	transform->GetRot()->y = Time::GetTime() * 0.5f;
-	//GetTransform()->GetRot()->z = counter * Game::DeltaTime() * 50;
-	//GetTransform()->GetPos()->z = -10;
 	transform->GetPos()->y = -1.0;
 	transform->GetScale()->x = 0.15;
 	transform->GetScale()->y = 0.15;
@@ -35,7 +33,6 @@ void Player::UpdateComposite()
 
 void Player::InitComposite()
 {
-	m_shader->use();
 	//gold
 	/*glUniform3f(glGetUniformLocation(m_shader->ID, "material.ambient"), 0.24725, 0.1995, 0.0745);
 	glUniform3f(glGetUniformLocation(m_shader->ID, "material.diffuse"), 0.75164, 0.60648, 0.22648);
@@ -48,11 +45,6 @@ void Player::InitComposite()
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.ambient"), 0.0, 0.05, 0.05);
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.diffuse"), 0.4, 0.5, 0.5);
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.specular"), 0.04, 0.7, 0.7);
-
-	m_shader->setFloat("material.shininess", 64);
-	m_shader->setFloat3("light.ambient", 1.0, 1.0, 1.0);
-	m_shader->setFloat3("light.diffuse", 1.0, 1.0, 1.0);
-	m_shader->setFloat3("light.specular", 1.0, 1.0, 1.0);
 }
 
 void Player::SetShaderProperties()
@@ -60,8 +52,17 @@ void Player::SetShaderProperties()
 	glm::vec3 lightPos = *Application::light->transform->GetPos();
 	glm::vec3 viewPos = Camera::MainCamera->Position;
 
-	m_shader->setFloat3("light.position", lightPos.x, lightPos.y, lightPos.z);
-	m_shader->setFloat3("viewPos", viewPos.x, viewPos.y, viewPos.z);
+	m_shader->setMat4("model", transform->GetModelMatrix());
+	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
+	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
+
+	m_shader->setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
+	m_shader->setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);
+
+	m_shader->setFloat("material.shininess", 64);
+	m_shader->setVec3("light.ambient", 1.0, 1.0, 1.0);
+	m_shader->setVec3("light.diffuse", 1.0, 1.0, 1.0);
+	m_shader->setVec3("light.specular", 1.0, 1.0, 1.0);
 }
 
 void Player::HandleInput()

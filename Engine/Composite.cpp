@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Composite.h"
 #include "Mesh.h"
+#include "MeshRenderer.h"
 
 
 Composite::Composite()
@@ -14,33 +15,39 @@ Composite::Composite()
 
 Composite::~Composite()
 {
-	if (transform)
-		delete transform;
+	for (size_t i = 0; i < _components.size(); i++)
+	{
+		if(_components[i])
+			delete _components[i];
+	}
 }
 
 void Composite::AddComponent(Component * component)
 {
-	m_components.push_back(component);
+	_components.push_back(component);
 	component->SetParent(this);
+	RecalculateBB(component);
 }
 
 void Composite::RemoveComponent(Component * component)
 {
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		if (m_components[i] == component) {
-			delete component;
-			m_components.erase(m_components.begin() + i);
+		if (_components[i] == component) {
+			delete _components[i];
+			_components.erase(_components.begin() + i);
 		}
 	}
+
+	RemoveBB(component);
 }
 
 void Composite::Init()
 {
 	InitComposite();
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		m_components[i]->Init();
+		_components[i]->Init();
 	}
 }
 
@@ -57,9 +64,9 @@ void Composite::Update()
 		m_worldRotation = *transform->GetRot() + parent->GetWorldRotation();
 	}
 
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		m_components[i]->Update();
+		_components[i]->Update();
 	}
 }
 
@@ -67,9 +74,9 @@ void Composite::Render()
 {
 	RenderComposite(m_modelMatrix);
 
-	for (size_t i = 0; i < m_components.size(); i++)
+	for (size_t i = 0; i < _components.size(); i++)
 	{
-		m_components[i]->Render();
+		_components[i]->Render();
 	}
 }
 
@@ -83,6 +90,38 @@ void Composite::UpdateComposite()
 
 void Composite::RenderComposite(glm::mat4 tempMatrix)
 {
+}
+
+void Composite::RecalculateBB(Component* childComponent)
+{
+	Composite* compositeChild = dynamic_cast<Composite*>(childComponent);
+	if (compositeChild) {
+		BoundingBox* childBB = compositeChild->transform->GetBoundingBox();
+		transform->GetBoundingBox()->Combine(*childBB);
+		transform->GetBoundingBox()->Refresh();
+	}
+	//bottom-up recalculation
+	Composite* parent = GetParent();
+	if (parent)
+		parent->RecalculateBB(this);
+}
+
+void Composite::RemoveBB(Component * childComponent)
+{
+    //if i am a meshrenderer, take the original bounding box of the model and recalculate
+	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
+	if (mesh) {
+		BoundingBox modelBB = mesh->GetModel()->GetBoundingBox();
+		transform->SetBoundingBox(modelBB);
+
+		for (size_t i = 0; i < _components.size(); i++) {
+			RecalculateBB(_components[i]);
+		}
+
+		Composite* parent = GetParent();
+		if (parent)
+			parent->RemoveBB(this);
+	}
 }
 
 glm::mat4 Composite::GetModelMatrix()
@@ -102,7 +141,7 @@ glm::vec3 Composite::GetWorldRotation()
 
 vector<Component*> Composite::GetComponents()
 {
-	return m_components;
+	return _components;
 }
 
 

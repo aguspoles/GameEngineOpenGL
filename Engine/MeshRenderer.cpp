@@ -27,10 +27,6 @@ void MeshRenderer::RenderComposite(glm::mat4 modelMatrix)
 
 	SetShaderProperties();
 
-	m_shader->setMat4("model", transform->GetModelMatrix());
-	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
-	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
-
 	m_model->Draw(*m_shader);
 }
 
@@ -42,9 +38,18 @@ void MeshRenderer::SetShader(Shader* shader)
 void MeshRenderer::SetModel(Model* model)
 {
 	m_model = model;
+	BoundingBox modelBB = model->GetBoundingBox();
+	transform->GetBoundingBox()->Combine(modelBB);
+	transform->GetBoundingBox()->Transform(transform->GetModelMatrix());
+	transform->GetBoundingBox()->Refresh();
 }
 
 Shader * MeshRenderer::GetShader()
 {
 	return m_shader;
+}
+
+Model * MeshRenderer::GetModel()
+{
+	return m_model;
 }

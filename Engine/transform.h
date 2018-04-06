@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include "Component.h"
 #include "camera.h"
+#include "BoundingBox.h"
 
 class ENGINE_API Transform : public Component
 {
@@ -14,22 +15,27 @@ public:
 
 	glm::mat4 UpdateModelMatrix();
 
-	inline glm::vec3* GetPos() { return &m_pos; }
-	inline glm::vec3* GetRot() { return &m_rot; }
-	inline glm::vec3* GetScale() { return &m_scale; }
-	inline glm::mat4 GetModelMatrix() const { return m_modelMatrix; }
+	inline glm::vec3* GetPos() { return &_pos; }
+	inline glm::vec3* GetRot() { return &_rot; }
+	inline glm::vec3* GetScale() { return &_scale; }
+	inline glm::mat4 GetModelMatrix() const { return _modelMatrix; }
 
-	inline void SetPos(glm::vec3& pos) { this->m_pos = pos; }
-	inline void SetRot(glm::vec3& rot) { this->m_rot = rot; }
-	inline void SetScale(glm::vec3& scale) { this->m_scale = scale; }
+	inline void SetPos(glm::vec3& pos) { this->_pos = pos; }
+	inline void SetRot(glm::vec3& rot) { this->_rot = rot; }
+	inline void SetScale(glm::vec3& scale) { this->_scale = scale; }
 
-protected:
+	BoundingBox* GetBoundingBox();
+	void SetBoundingBox(BoundingBox bb);
+	void TransformBB();
+
 private:
-	glm::vec3 m_pos;
-	glm::vec3 m_rot;
-	glm::vec3 m_scale;
+	glm::vec3 _pos;
+	glm::vec3 _rot;
+	glm::vec3 _scale;
 
-	glm::mat4 m_modelMatrix;
+	glm::mat4 _modelMatrix;
+
+	BoundingBox _bb;
 };
 
 #endif
