@@ -8,6 +8,8 @@ Transform::Transform()
 	_rot = glm::vec3(0.0f, 0.0f, 0.0f);
 	_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	_modelMatrix = glm::mat4(1.0f);
+
+	_bb = new BoundingBox(true);
 }
 
 Transform::Transform(const glm::vec3 & pos, const glm::vec3 & rot, const glm::vec3 & scale)
@@ -20,6 +22,7 @@ Transform::Transform(const glm::vec3 & pos, const glm::vec3 & rot, const glm::ve
 
 Transform::~Transform()
 {
+	if (_bb) delete _bb;
 }
 
 glm::mat4 Transform::UpdateModelMatrix()
@@ -37,12 +40,12 @@ glm::mat4 Transform::UpdateModelMatrix()
 
 BoundingBox * Transform::GetBoundingBox()
 {
-	return &_bb;
+	return _bb;
 }
 
 void Transform::SetBoundingBox(BoundingBox bb)
 {
-	_bb = bb;
+	*_bb = bb;
 }
 
 void Transform::TransformBB()
@@ -69,7 +72,7 @@ void Transform::TransformBB()
 
 
 		BB.Refresh();
-		_bb = BB;
+		*_bb = BB;
 
 		for (size_t i = 0; i < parentComponents.size(); i++)
 		{

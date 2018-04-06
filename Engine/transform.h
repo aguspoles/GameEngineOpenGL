@@ -35,7 +35,7 @@ private:
 
 	glm::mat4 _modelMatrix;
 
-	BoundingBox _bb;
+	BoundingBox* _bb;
 };
 
 #endif
