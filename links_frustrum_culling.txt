@@ -1,0 +1,3 @@
+http://www.chadvernon.com/blog/resources/directx9/frustum-culling/
+http://www.lighthouse3d.com/tutorials/view-frustum-culling/geometric-approach-testing-boxes/
+http://www.lighthouse3d.com/tutorials/view-frustum-culling/geometric-approach-testing-boxes-ii/
