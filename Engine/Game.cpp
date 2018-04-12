@@ -9,7 +9,7 @@ bool Game::isRunning = true;
 Game::Game() : _frameCounter(0), _frames(0), _timeSinceLastUpdate(0)
 {
 	_timePerFrame = 1.0f / FRAME_CAP;//time to render 1 frame
-	_fpsCapped = true;
+	_fpsCapped = false;
 }
 
 Game::~Game()

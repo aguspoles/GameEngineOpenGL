@@ -74,6 +74,7 @@ void Composite::Render()
 {
 	RenderComposite(m_modelMatrix);
 
+	transform->GetBoundingBox()->ModelMatrix = m_modelMatrix;
 	transform->GetBoundingBox()->Render();
 
 	for (size_t i = 0; i < _components.size(); i++)

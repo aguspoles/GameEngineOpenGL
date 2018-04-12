@@ -4,7 +4,8 @@
 #include <glm/gtx/transform.hpp>
 #include "Component.h"
 #include "camera.h"
-#include "BoundingBox.h"
+
+class BoundingBox;
 
 class ENGINE_API Transform : public Component
 {

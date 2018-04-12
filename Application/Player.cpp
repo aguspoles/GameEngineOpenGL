@@ -45,6 +45,11 @@ void Player::InitComposite()
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.ambient"), 0.0, 0.05, 0.05);
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.diffuse"), 0.4, 0.5, 0.5);
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.specular"), 0.04, 0.7, 0.7);
+	transform->GetPos()->y = -1.0;
+	transform->GetScale()->x = 0.15;
+	transform->GetScale()->y = 0.15;
+	transform->GetScale()->z = 0.15;
+	transform->UpdateModelMatrix();
 }
 
 void Player::SetShaderProperties()

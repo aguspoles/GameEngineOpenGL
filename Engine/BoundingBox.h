@@ -7,7 +7,6 @@ class ENGINE_API BoundingBox
 {
 public:
 	BoundingBox();
-	BoundingBox(bool renderable);
 	~BoundingBox();
 	float xMin, xMax,
 		yMin, yMax,
@@ -19,7 +18,9 @@ public:
 	void Transform(glm::mat4 mat);
 
 	void Render();
+
 	void operator=(BoundingBox bb);
+	glm::mat4 ModelMatrix;
 private:
 	glm::vec3 vertices[8];
 

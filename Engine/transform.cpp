@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "transform.h"
 #include "MeshRenderer.h"
+#include "BoundingBox.h"
 
 Transform::Transform()
 {
@@ -9,7 +10,7 @@ Transform::Transform()
 	_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	_modelMatrix = glm::mat4(1.0f);
 
-	_bb = new BoundingBox(true);
+	_bb = new BoundingBox;
 }
 
 Transform::Transform(const glm::vec3 & pos, const glm::vec3 & rot, const glm::vec3 & scale)
@@ -35,6 +36,7 @@ glm::mat4 Transform::UpdateModelMatrix()
 	glm::mat4 rotMat = rotX * rotY * rotZ;
 
 	_modelMatrix = posMat * rotMat * scaleMat;
+	TransformBB();
 	return _modelMatrix;
 }
 
