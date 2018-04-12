@@ -17,7 +17,7 @@ Composite::~Composite()
 {
 	for (size_t i = 0; i < _components.size(); i++)
 	{
-		if(_components[i])
+		if (_components[i])
 			delete _components[i];
 	}
 }
@@ -74,9 +74,6 @@ void Composite::Render()
 {
 	RenderComposite(m_modelMatrix);
 
-	transform->GetBoundingBox()->ModelMatrix = m_modelMatrix;
-	transform->GetBoundingBox()->Render();
-
 	for (size_t i = 0; i < _components.size(); i++)
 	{
 		_components[i]->Render();
@@ -97,12 +94,9 @@ void Composite::RenderComposite(glm::mat4 tempMatrix)
 
 void Composite::RecalculateBB(Component* childComponent)
 {
-	Composite* compositeChild = dynamic_cast<Composite*>(childComponent);
-	if (compositeChild) {
-		BoundingBox* childBB = compositeChild->transform->GetBoundingBox();
-		transform->GetBoundingBox()->Combine(*childBB);
-		transform->GetBoundingBox()->Refresh();
-	}
+	BoundingBox childBB = childComponent->BB;
+	BB.Combine(childBB);
+	BB.Refresh();
 	//bottom-up recalculation
 	Composite* parent = GetParent();
 	if (parent)
@@ -111,11 +105,11 @@ void Composite::RecalculateBB(Component* childComponent)
 
 void Composite::RemoveBB(Component * childComponent)
 {
-    //if i am a meshrenderer, take the original bounding box of the model and recalculate
+	//if i am a meshrenderer, take the original bounding box of the model and recalculate
 	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
 	if (mesh) {
 		BoundingBox modelBB = mesh->GetModel()->GetBoundingBox();
-		transform->SetBoundingBox(modelBB);
+		BB = modelBB;
 
 		for (size_t i = 0; i < _components.size(); i++) {
 			RecalculateBB(_components[i]);

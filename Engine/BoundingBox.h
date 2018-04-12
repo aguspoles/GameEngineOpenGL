@@ -1,7 +1,7 @@
 #ifndef BOUNDING_BOX_H
 #define BOUNDING_BOX_H
 #include <glm\glm.hpp>
-#include "Shader.h"
+//#include "Shader.h"
 
 class ENGINE_API BoundingBox
 {
@@ -14,8 +14,7 @@ public:
 
 	void Combine(BoundingBox otherBb);
 	void Refresh();
-	void Transform(glm::vec3 pos, glm::vec3 rot, glm::vec3 sca);
-	void Transform(glm::mat4 mat);
+	BoundingBox Transform(glm::mat4 mat);
 
 	void Render();
 
@@ -29,7 +28,7 @@ private:
 	GLuint _vertexArrayObject;
 	GLuint _vertexArrayBuffers[NUM_BUFFERS];
 
-	Shader* _shader;
+	//Shader* _shader;
 
 };
 

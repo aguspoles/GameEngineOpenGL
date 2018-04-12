@@ -5,8 +5,6 @@
 #include "Component.h"
 #include "camera.h"
 
-class BoundingBox;
-
 class ENGINE_API Transform : public Component
 {
 public:
@@ -25,9 +23,6 @@ public:
 	inline void SetRot(glm::vec3& rot) { this->_rot = rot; }
 	inline void SetScale(glm::vec3& scale) { this->_scale = scale; }
 
-	BoundingBox* GetBoundingBox();
-	void SetBoundingBox(BoundingBox bb);
-	void TransformBB();
 
 private:
 	glm::vec3 _pos;
@@ -36,7 +31,7 @@ private:
 
 	glm::mat4 _modelMatrix;
 
-	BoundingBox* _bb;
+	void TransformBB();
 };
 
 #endif

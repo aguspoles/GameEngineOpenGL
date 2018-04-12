@@ -89,7 +89,7 @@ void Application::Init() {
 	player->SetModel(nanosuit);
 	player->SetShader(phongShader);
 	//test bounding box
-	BoundingBox* bb = player->transform->GetBoundingBox();
+	BoundingBox bb = player->BB;
 
 	light = new Light(lightVertices, lightIndices);
 	light->SetShader(basicShader);

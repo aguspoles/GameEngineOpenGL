@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "transform.h"
 #include "MeshRenderer.h"
-#include "BoundingBox.h"
+//#include "BoundingBox.h"
 
 Transform::Transform()
 {
@@ -9,8 +9,6 @@ Transform::Transform()
 	_rot = glm::vec3(0.0f, 0.0f, 0.0f);
 	_scale = glm::vec3(1.0f, 1.0f, 1.0f);
 	_modelMatrix = glm::mat4(1.0f);
-
-	_bb = new BoundingBox;
 }
 
 Transform::Transform(const glm::vec3 & pos, const glm::vec3 & rot, const glm::vec3 & scale)
@@ -23,7 +21,6 @@ Transform::Transform(const glm::vec3 & pos, const glm::vec3 & rot, const glm::ve
 
 Transform::~Transform()
 {
-	if (_bb) delete _bb;
 }
 
 glm::mat4 Transform::UpdateModelMatrix()
@@ -36,32 +33,42 @@ glm::mat4 Transform::UpdateModelMatrix()
 	glm::mat4 rotMat = rotX * rotY * rotZ;
 
 	_modelMatrix = posMat * rotMat * scaleMat;
+
+	Composite* parent = GetParent();
+	if (parent) {
+		vector<Component*> parentComponents = parent->GetComponents();
+		for (size_t i = 0; i < parentComponents.size(); i++)
+		{
+			Composite* composite = dynamic_cast<Composite*>(parentComponents[i]);
+			if(composite)
+			   composite->transform->UpdateModelMatrix();
+		}
+	}
+
 	TransformBB();
+
 	return _modelMatrix;
-}
-
-BoundingBox * Transform::GetBoundingBox()
-{
-	return _bb;
-}
-
-void Transform::SetBoundingBox(BoundingBox bb)
-{
-	*_bb = bb;
 }
 
 void Transform::TransformBB()
 {
+	BoundingBox bb = BB.Transform(_modelMatrix);
+	BB = bb;
 	Composite* parent = GetParent();
-	BoundingBox BB;
 	if (parent) {
 		MeshRenderer* parentMesh = dynamic_cast<MeshRenderer*>(parent);
+		BoundingBox bb1;
 		if (parentMesh) {
 			Model* parentModel = parentMesh->GetModel();
 			BoundingBox parentModelBB = parentModel->GetBoundingBox();
-			BB.Combine(parentModelBB);
-			BB.Refresh();
-			BB.Transform(_modelMatrix);
+			bb1.Combine(parentModelBB);
+			bb1.Refresh();
+			bb1.Transform(_modelMatrix);
+		}
+		else {
+			bb1.Combine(parent->BB);
+			bb1.Refresh();
+			bb1.Transform(_modelMatrix);
 		}
 
 		vector<Component*> parentComponents = parent->GetComponents();
@@ -70,15 +77,6 @@ void Transform::TransformBB()
 			Composite* comp = dynamic_cast<Composite*>(parentComponents[i]);
 			if (comp)
 				comp->transform->TransformBB();
-		}
-
-
-		BB.Refresh();
-		*_bb = BB;
-
-		for (size_t i = 0; i < parentComponents.size(); i++)
-		{
-			parent->RecalculateBB(parentComponents[i]);
 		}
 	}
 }
