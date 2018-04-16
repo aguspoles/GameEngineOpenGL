@@ -55,6 +55,7 @@ Game::~Game()
 void Game::Run()
 {
 	Init();
+	Root.Init();
 
 	_lastFrameTime = Time::GetTime();
 
@@ -83,7 +84,7 @@ void Game::Run()
 			Root.Update();
 		}
 		if (_frameCounter >= Time::SECOND) {
-			cout << "FPS:" << _frames << endl;
+			//cout << "FPS:" << _frames << endl;
 			_frames = 0;
 			_frameCounter = 0;
 		}

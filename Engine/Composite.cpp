@@ -45,6 +45,16 @@ void Composite::RemoveComponent(Component * component)
 void Composite::Init()
 {
 	InitComposite();
+	m_modelMatrix = transform->GetModelMatrix();
+	Composite* parent = GetParent();
+	if (parent)
+	{
+		m_modelMatrix *= parent->GetModelMatrix();
+		m_worldPosition = *transform->GetPos() + parent->GetWorldPosition();
+		m_worldRotation = *transform->GetRot() + parent->GetWorldRotation();
+	}
+	TransformBB();
+
 	for (size_t i = 0; i < _components.size(); i++)
 	{
 		_components[i]->Init();
@@ -53,8 +63,8 @@ void Composite::Init()
 
 void Composite::Update()
 {
-	m_modelMatrix = transform->GetModelMatrix();
 	UpdateComposite();
+	m_modelMatrix = transform->GetModelMatrix();
 
 	Composite* parent = GetParent();
 	if (parent)
@@ -63,6 +73,7 @@ void Composite::Update()
 		m_worldPosition = *transform->GetPos() + parent->GetWorldPosition();
 		m_worldRotation = *transform->GetRot() + parent->GetWorldRotation();
 	}
+	TransformBB();
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -72,7 +83,13 @@ void Composite::Update()
 
 void Composite::Render()
 {
-	RenderComposite(m_modelMatrix);
+	if (BoxInFrustum(BB) == PositionInFrustum::INSIDE) {
+		RenderComposite(m_modelMatrix);
+		BB.ModelMatrix = m_modelMatrix;
+		BB.Render();
+		cout << "render" << endl;
+	}
+	else cout << "not render" << endl;
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -94,13 +111,48 @@ void Composite::RenderComposite(glm::mat4 tempMatrix)
 
 void Composite::RecalculateBB(Component* childComponent)
 {
-	BoundingBox childBB = childComponent->BB;
-	BB.Combine(childBB);
-	BB.Refresh();
+	Composite* composite = dynamic_cast<Composite*>(childComponent);
+	if (composite)
+	{
+		BoundingBox childBB = composite->BB;
+		BB.Combine(childBB);
+		BB.Refresh();
+	}
 	//bottom-up recalculation
 	Composite* parent = GetParent();
 	if (parent)
 		parent->RecalculateBB(this);
+}
+
+PositionInFrustum Composite::BoxInFrustum(BoundingBox bb)
+{
+	unsigned int Out, In;
+	PositionInFrustum res = PositionInFrustum::INSIDE;
+	vector<Plane> planes = Camera::MainCamera->FrustumPlanes();
+	// for each plane do ...
+	for (size_t i = 0; i < 6; i++)
+	{
+		// reset counters for corners in and out
+		Out = In = 0;
+		// for each corner of the box do ...
+		// get out of the cycle as soon as a box as corners
+		// both inside and out of the frustum
+		for (size_t k = 0; k < 8 && (In == 0 || Out == 0); k++)
+		{
+			// is the corner outside or inside
+			if (planes[i].Distance(bb.Getvertex(k)) < 0)
+				Out++;
+			else
+				In++;
+		}
+		//if all corners are out
+		if (In == 0)
+			return PositionInFrustum::OUTSIDE;
+		// if some corners are out and others are in
+		else if (Out > 0)
+			res = PositionInFrustum::INTERSECT;
+	}
+	return(res);
 }
 
 void Composite::RemoveBB(Component * childComponent)
@@ -118,6 +170,35 @@ void Composite::RemoveBB(Component * childComponent)
 		Composite* parent = GetParent();
 		if (parent)
 			parent->RemoveBB(this);
+	}
+}
+
+void Composite::TransformBB()
+{
+	//first we change our BB
+	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
+	BoundingBox bb;
+	if (mesh) {
+		Model* model = mesh->GetModel();
+		BoundingBox modelBB = model->GetBoundingBox();
+		bb.Combine(modelBB);
+		bb.Refresh();
+		BB = bb.Transform(mesh->GetModelMatrix());
+	}
+
+	//then we change our children and recalculate ours
+	for (size_t i = 0; i < _components.size(); i++)
+	{
+		Composite* comp = dynamic_cast<Composite*>(_components[i]);
+		if (comp) {
+			comp->TransformBB();
+		}
+	}
+
+	//finally we recalculate our parent's BB with ours and the recursion of RecalculateBB()
+	//do the bottom-up caculations
+	if (GetParent()) {
+		GetParent()->RecalculateBB(this);
 	}
 }
 

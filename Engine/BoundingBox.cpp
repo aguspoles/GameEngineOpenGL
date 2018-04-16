@@ -2,7 +2,7 @@
 #include "BoundingBox.h"
 #include <vector>
 #include "display.h"
-//#include "Camera.h"
+#include "Camera.h"
 
 
 BoundingBox::BoundingBox() : xMin(+10000000), yMin(+10000000), zMin(+10000000),
@@ -75,6 +75,11 @@ BoundingBox BoundingBox::Transform(glm::mat4 mat)
 	return bb;
 }
 
+glm::vec3 BoundingBox::Getvertex(unsigned int index) const
+{
+	return vertices[index];
+}
+
 void BoundingBox::Combine(BoundingBox otherBb)
 {
 	xMin = std::min(xMin, otherBb.xMin);
@@ -96,18 +101,18 @@ void BoundingBox::Render()
 
 	//glBindVertexArray(_vertexArrayObject);
 
-	////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//glDrawElementsBaseVertex(GL_TRIANGLE_STRIP, _numIndices, GL_UNSIGNED_INT, 0, 0);
 	////glDrawElements(GL_TRIANGLE_STRIP, _numIndices, GL_UNSIGNED_INT, 0);
-	////glDrawArrays(GL_TRIANGLES, 0, 36);
+	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	//glBindVertexArray(0);
 }
 
-void BoundingBox::operator=(BoundingBox bb)
-{
-	Combine(bb);
-	Refresh();
-}
+//void BoundingBox::operator=(BoundingBox bb)
+//{
+//	Combine(bb);
+//	Refresh();
+//}
 

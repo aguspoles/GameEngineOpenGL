@@ -24,10 +24,7 @@ void Player::UpdateComposite()
 		transform->GetPos()->x += 5 * Time::deltaTime;
 
 	transform->GetRot()->y = Time::GetTime() * 0.5f;
-	transform->GetPos()->y = -1.0;
-	transform->GetScale()->x = 0.15;
-	transform->GetScale()->y = 0.15;
-	transform->GetScale()->z = 0.15;
+
 	transform->UpdateModelMatrix();
 }
 
@@ -57,7 +54,7 @@ void Player::SetShaderProperties()
 	glm::vec3 lightPos = *Application::light->transform->GetPos();
 	glm::vec3 viewPos = Camera::MainCamera->Position;
 
-	m_shader->setMat4("model", transform->GetModelMatrix());
+	m_shader->setMat4("model", GetModelMatrix());
 	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
 	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
 

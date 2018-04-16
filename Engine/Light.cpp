@@ -54,7 +54,7 @@ void Light::RenderComposite(glm::mat4 modelMatrix)
 {
 	m_shader->use();
 
-	m_shader->setMat4("model", transform->GetModelMatrix());
+	m_shader->setMat4("model", GetModelMatrix());
 	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
 	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
 

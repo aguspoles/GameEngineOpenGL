@@ -39,9 +39,10 @@ void MeshRenderer::SetModel(Model* model)
 {
 	m_model = model;
 	BoundingBox modelBB = model->GetBoundingBox();
-	transform->BB.Combine(modelBB);
-	transform->BB.Transform(transform->GetModelMatrix());
-	transform->BB.Refresh();
+	BoundingBox bb;
+	bb.Combine(modelBB);
+	bb.Refresh();
+	BB = bb.Transform(transform->GetModelMatrix());
 }
 
 Shader * MeshRenderer::GetShader()

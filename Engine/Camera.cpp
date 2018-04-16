@@ -41,6 +41,55 @@ glm::mat4 Camera::GetProjectionMatrix()
 	return glm::perspective(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 100.0f);
 }
 
+std::vector<Plane> Camera::FrustumPlanes()
+{
+	std::vector<Plane> res;
+	glm::mat4 viewProj = GetViewMatrix() * GetProjectionMatrix();
+	Plane rightPlane{
+		viewProj[4][1] - viewProj[1][1],
+		viewProj[4][2] - viewProj[1][2],
+		viewProj[4][3] - viewProj[1][3],
+		viewProj[4][4] - viewProj[1][4]
+	};
+	res.push_back(rightPlane);
+	Plane leftPlane{
+		viewProj[4][1] + viewProj[1][1],
+		viewProj[4][2] + viewProj[1][2],
+		viewProj[4][3] + viewProj[1][3],
+		viewProj[4][4] + viewProj[1][4]
+	};
+	res.push_back(leftPlane);
+	Plane nearPlane{
+		0,
+		0,
+		viewProj[3][3],
+		0
+	};
+	res.push_back(nearPlane);
+	Plane farPlane{
+		viewProj[4][1] - viewProj[3][1],
+		viewProj[4][2] - viewProj[3][2],
+		viewProj[4][3] - viewProj[3][3],
+		viewProj[4][4] - viewProj[3][4]
+	};
+	res.push_back(farPlane);
+	Plane topPlane{
+		viewProj[4][1] - viewProj[2][1],
+		viewProj[4][2] - viewProj[2][2],
+		viewProj[4][3] - viewProj[2][3],
+		viewProj[4][4] - viewProj[2][4]
+	};
+	res.push_back(topPlane);
+	Plane bottomPlane{
+		viewProj[4][1] + viewProj[2][1],
+		viewProj[4][2] + viewProj[2][2],
+		viewProj[4][3] + viewProj[2][3],
+		viewProj[4][4] + viewProj[2][4]
+	};
+	res.push_back(bottomPlane);
+	return res;
+}
+
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
 	float velocity = MovementSpeed * deltaTime;

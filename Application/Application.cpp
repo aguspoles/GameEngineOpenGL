@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "Shader.h"
 #include "Player.h"
+#include "Enemy.h"
 
 Light* Application::light = NULL;
 
@@ -91,6 +92,10 @@ void Application::Init() {
 	//test bounding box
 	BoundingBox bb = player->BB;
 
+	Enemy* p1 = new Enemy;
+	p1->SetModel(nanosuit);
+	p1->SetShader(phongShader);
+
 	light = new Light(lightVertices, lightIndices);
 	light->SetShader(basicShader);
 	light->Color = glm::vec3(1.0, 0, 0);
@@ -99,13 +104,14 @@ void Application::Init() {
 	AddShader(basicShader);
 	AddModel(nanosuit);
 
-	Root.AddComponent(light);
+	//player->AddComponent(p1);
 	Root.AddComponent(player);
-	Root.Init();
+	Root.AddComponent(light);
 }
 
 void Application::Update()
 {
+
 }
 
 void Application::Render()

@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "transform.h"
 #include "MeshRenderer.h"
-//#include "BoundingBox.h"
+#include "BoundingBox.h"
 
 Transform::Transform()
 {
@@ -34,49 +34,5 @@ glm::mat4 Transform::UpdateModelMatrix()
 
 	_modelMatrix = posMat * rotMat * scaleMat;
 
-	Composite* parent = GetParent();
-	if (parent) {
-		vector<Component*> parentComponents = parent->GetComponents();
-		for (size_t i = 0; i < parentComponents.size(); i++)
-		{
-			Composite* composite = dynamic_cast<Composite*>(parentComponents[i]);
-			if(composite)
-			   composite->transform->UpdateModelMatrix();
-		}
-	}
-
-	TransformBB();
-
 	return _modelMatrix;
-}
-
-void Transform::TransformBB()
-{
-	BoundingBox bb = BB.Transform(_modelMatrix);
-	BB = bb;
-	Composite* parent = GetParent();
-	if (parent) {
-		MeshRenderer* parentMesh = dynamic_cast<MeshRenderer*>(parent);
-		BoundingBox bb1;
-		if (parentMesh) {
-			Model* parentModel = parentMesh->GetModel();
-			BoundingBox parentModelBB = parentModel->GetBoundingBox();
-			bb1.Combine(parentModelBB);
-			bb1.Refresh();
-			bb1.Transform(_modelMatrix);
-		}
-		else {
-			bb1.Combine(parent->BB);
-			bb1.Refresh();
-			bb1.Transform(_modelMatrix);
-		}
-
-		vector<Component*> parentComponents = parent->GetComponents();
-		for (size_t i = 0; i < parentComponents.size(); i++)
-		{
-			Composite* comp = dynamic_cast<Composite*>(parentComponents[i]);
-			if (comp)
-				comp->transform->TransformBB();
-		}
-	}
 }

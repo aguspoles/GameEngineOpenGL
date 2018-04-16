@@ -4,6 +4,7 @@
 #include "Component.h"
 #include <glm/glm.hpp>
 #include "Transform.h"
+#include "Utils.h"
 
 using namespace std;
 
@@ -32,7 +33,12 @@ public:
 	glm::vec3 GetWorldRotation();
 	vector<Component*> GetComponents();
 
+	BoundingBox BB;
+	void TransformBB();
 	void RecalculateBB(Component* childComponent);
+	//if the BB is in frustum
+	PositionInFrustum BoxInFrustum(BoundingBox bb);
+
 protected:
 	virtual void InitComposite();
 	virtual void UpdateComposite();

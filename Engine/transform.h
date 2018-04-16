@@ -30,8 +30,6 @@ private:
 	glm::vec3 _scale;
 
 	glm::mat4 _modelMatrix;
-
-	void TransformBB();
 };
 
 #endif
