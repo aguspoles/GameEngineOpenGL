@@ -22,6 +22,7 @@ public:
 
 	void ManageTime();
 	void SetFPSCapped(bool value);
+	void ShowInfo();
 
 	void AddMesh(Mesh* mesh);
 	void AddModel(Model* model);

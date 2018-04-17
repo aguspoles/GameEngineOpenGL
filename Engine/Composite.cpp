@@ -3,6 +3,7 @@
 #include "Mesh.h"
 #include "MeshRenderer.h"
 
+unsigned int Composite::ObjectsRendered = 0;
 
 Composite::Composite()
 {
@@ -87,9 +88,8 @@ void Composite::Render()
 		RenderComposite(m_modelMatrix);
 		BB.ModelMatrix = m_modelMatrix;
 		BB.Render();
-		cout << "render" << endl;
+		ObjectsRendered++;
 	}
-	else cout << "not render" << endl;
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -140,7 +140,7 @@ PositionInFrustum Composite::BoxInFrustum(BoundingBox bb)
 		for (size_t k = 0; k < 8 && (In == 0 || Out == 0); k++)
 		{
 			// is the corner outside or inside
-			if (planes[i].Distance(bb.Getvertex(k)) < 0)
+			if (planes[i].Distance(bb.Getvertex(k)) > 0)
 				Out++;
 			else
 				In++;

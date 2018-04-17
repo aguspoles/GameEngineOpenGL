@@ -15,6 +15,7 @@ public:
 	virtual ~Composite();
 
 	Transform* transform;
+	static unsigned int ObjectsRendered;
 
 	void AddComponent(Component* component);
 	void RemoveComponent(Component* component);

@@ -84,13 +84,13 @@ void Game::Run()
 			Root.Update();
 		}
 		if (_frameCounter >= Time::SECOND) {
-			//cout << "FPS:" << _frames << endl;
 			_frames = 0;
 			_frameCounter = 0;
 		}
 		Display::Instance()->Clear(0.0f, .0f, 0.0f, 1.0f);
 
 		Root.Render();
+		ShowInfo();
 		_frames++;
 
 		Display::Instance()->SwapBuffers();
@@ -117,6 +117,14 @@ void Game::ManageTime()
 void Game::SetFPSCapped(bool value)
 {
 	_fpsCapped = value;
+}
+
+void Game::ShowInfo()
+{
+	cout << "FPS:" << _frames << endl;
+	cout << "Objects Rendered: " << Root.ObjectsRendered << endl;
+	cout << "--------------------" << endl;
+	Root.ObjectsRendered = 0;
 }
 
 void Game::AddMesh(Mesh* mesh)

@@ -44,48 +44,48 @@ glm::mat4 Camera::GetProjectionMatrix()
 std::vector<Plane> Camera::FrustumPlanes()
 {
 	std::vector<Plane> res;
-	glm::mat4 viewProj = GetViewMatrix() * GetProjectionMatrix();
-	Plane rightPlane{
-		viewProj[4][1] - viewProj[1][1],
-		viewProj[4][2] - viewProj[1][2],
-		viewProj[4][3] - viewProj[1][3],
-		viewProj[4][4] - viewProj[1][4]
-	};
+	glm::mat4 viewProj = GetProjectionMatrix() * GetViewMatrix();
+	Plane rightPlane(
+		viewProj[3][0] - viewProj[0][0],
+		viewProj[3][1] - viewProj[0][1],
+		viewProj[3][2] - viewProj[0][2],
+		viewProj[3][3] - viewProj[0][3]
+	);
 	res.push_back(rightPlane);
-	Plane leftPlane{
-		viewProj[4][1] + viewProj[1][1],
-		viewProj[4][2] + viewProj[1][2],
-		viewProj[4][3] + viewProj[1][3],
-		viewProj[4][4] + viewProj[1][4]
-	};
+	Plane leftPlane(
+		viewProj[3][0] + viewProj[0][0],
+		viewProj[3][1] + viewProj[0][1],
+		viewProj[3][2] + viewProj[0][2],
+		viewProj[3][3] + viewProj[0][3]
+	);
 	res.push_back(leftPlane);
-	Plane nearPlane{
+	Plane nearPlane(
 		0,
 		0,
-		viewProj[3][3],
+		viewProj[2][2],
 		0
-	};
+	);
 	res.push_back(nearPlane);
-	Plane farPlane{
-		viewProj[4][1] - viewProj[3][1],
-		viewProj[4][2] - viewProj[3][2],
-		viewProj[4][3] - viewProj[3][3],
-		viewProj[4][4] - viewProj[3][4]
-	};
+	Plane farPlane(
+		viewProj[3][0] - viewProj[2][0],
+		viewProj[3][1] - viewProj[2][1],
+		viewProj[3][2] - viewProj[2][2],
+		viewProj[3][3] - viewProj[2][3]
+	);
 	res.push_back(farPlane);
-	Plane topPlane{
-		viewProj[4][1] - viewProj[2][1],
-		viewProj[4][2] - viewProj[2][2],
-		viewProj[4][3] - viewProj[2][3],
-		viewProj[4][4] - viewProj[2][4]
-	};
+	Plane topPlane(
+		viewProj[3][0] - viewProj[1][0],
+		viewProj[3][1] - viewProj[1][1],
+		viewProj[3][2] - viewProj[1][2],
+		viewProj[3][3] - viewProj[1][3]
+	);
 	res.push_back(topPlane);
-	Plane bottomPlane{
-		viewProj[4][1] + viewProj[2][1],
-		viewProj[4][2] + viewProj[2][2],
-		viewProj[4][3] + viewProj[2][3],
-		viewProj[4][4] + viewProj[2][4]
-	};
+	Plane bottomPlane(
+		viewProj[3][0] + viewProj[1][0],
+		viewProj[3][1] + viewProj[1][1],
+		viewProj[3][2] + viewProj[1][2],
+		viewProj[3][3] + viewProj[1][3]
+	);
 	res.push_back(bottomPlane);
 	return res;
 }

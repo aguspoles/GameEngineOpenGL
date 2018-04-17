@@ -19,7 +19,7 @@ struct Plane {
 		_c /= mag;
 	}
 	int Distance(glm::vec3 point) {
-		int res = _a * point.x + _b * point.y + _c * point.z + _d;
+		int res = _a * point.x + _b * point.y + _c * point.z - _d;
 		return res / sqrt(_a*_a + _b * _b + _c * _c);
 	}
 };
@@ -74,7 +74,6 @@ public:
 
 	glm::mat4 GetProjectionMatrix();
 
-	//return frustum planes
 	std::vector<Plane> FrustumPlanes();
 
 	// Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
@@ -89,5 +88,6 @@ public:
 private:
 	// Calculates the front vector from the Camera's (updated) Eular Angles
 	void updateCameraVectors();
+	//return frustum planes
 };
 #endif
