@@ -114,8 +114,7 @@ void Composite::RecalculateBB(Component* childComponent)
 	Composite* composite = dynamic_cast<Composite*>(childComponent);
 	if (composite)
 	{
-		BoundingBox childBB = composite->BB;
-		BB.Combine(childBB);
+		BB.Combine(composite->BB);
 		BB.Refresh();
 	}
 	//bottom-up recalculation
@@ -140,7 +139,7 @@ PositionInFrustum Composite::BoxInFrustum(BoundingBox bb)
 		for (size_t k = 0; k < 8 && (In == 0 || Out == 0); k++)
 		{
 			// is the corner outside or inside
-			if (planes[i].Distance(bb.Getvertex(k)) > 0)
+			if (planes[i].Distance(bb.Getvertex(k)) < 0)
 				Out++;
 			else
 				In++;
@@ -185,8 +184,9 @@ void Composite::TransformBB()
 		bb.Refresh();
 		BB = bb.Transform(mesh->GetModelMatrix());
 	}
+	else return;
 
-	//then we change our children and recalculate ours
+	//then we change our children
 	for (size_t i = 0; i < _components.size(); i++)
 	{
 		Composite* comp = dynamic_cast<Composite*>(_components[i]);

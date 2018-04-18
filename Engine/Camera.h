@@ -19,8 +19,8 @@ struct Plane {
 		_c /= mag;
 	}
 	int Distance(glm::vec3 point) {
-		int res = _a * point.x + _b * point.y + _c * point.z - _d;
-		return res / sqrt(_a*_a + _b * _b + _c * _c);
+		int res = _a * point.x + _b * point.y + _c * point.z + _d;
+		return res;
 	}
 };
 

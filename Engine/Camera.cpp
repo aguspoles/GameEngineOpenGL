@@ -44,7 +44,7 @@ glm::mat4 Camera::GetProjectionMatrix()
 std::vector<Plane> Camera::FrustumPlanes()
 {
 	std::vector<Plane> res;
-	glm::mat4 viewProj = GetProjectionMatrix() * GetViewMatrix();
+	glm::mat4 viewProj =  GetProjectionMatrix() * GetViewMatrix();
 	Plane rightPlane(
 		viewProj[3][0] - viewProj[0][0],
 		viewProj[3][1] - viewProj[0][1],

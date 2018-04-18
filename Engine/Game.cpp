@@ -90,8 +90,9 @@ void Game::Run()
 		Display::Instance()->Clear(0.0f, .0f, 0.0f, 1.0f);
 
 		Root.Render();
-		ShowInfo();
 		_frames++;
+		ShowInfo();
+	    Root.ObjectsRendered = 0;
 
 		Display::Instance()->SwapBuffers();
 		glfwPollEvents();
@@ -124,7 +125,6 @@ void Game::ShowInfo()
 	cout << "FPS:" << _frames << endl;
 	cout << "Objects Rendered: " << Root.ObjectsRendered << endl;
 	cout << "--------------------" << endl;
-	Root.ObjectsRendered = 0;
 }
 
 void Game::AddMesh(Mesh* mesh)
