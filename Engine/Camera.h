@@ -10,7 +10,7 @@
 struct Plane {
 	float _a, _b, _c, _d;
 	Plane(float a, float b, float c, float d) : _a(a), _b(b), _c(c), _d(d) {
-		Normalize();
+		//Normalize();
 	}
 	void Normalize() {
 		float mag = sqrt(_a*_a + _b * _b + _c * _c);

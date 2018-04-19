@@ -60,10 +60,10 @@ std::vector<Plane> Camera::FrustumPlanes()
 	);
 	res.push_back(leftPlane);
 	Plane nearPlane(
-		0,
-		0,
-		viewProj[2][2],
-		0
+		viewProj[3][0] + viewProj[2][0],
+		viewProj[3][1] + viewProj[2][1],
+		viewProj[3][2] + viewProj[2][2],
+		viewProj[3][3] + viewProj[2][3]
 	);
 	res.push_back(nearPlane);
 	Plane farPlane(
@@ -142,7 +142,10 @@ void Camera::updateCameraVectors()
 	front.y = sin(glm::radians(Pitch));
 	front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 	Front = glm::normalize(front);
+	//Front = front;
 	// Also re-calculate the Right and Up vector
 	Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	Up = glm::normalize(glm::cross(Right, Front));
+	/*Right = (glm::cross(Front, WorldUp)); 
+	Up = (glm::cross(Right, Front));*/
 }

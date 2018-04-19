@@ -84,11 +84,19 @@ void Composite::Update()
 
 void Composite::Render()
 {
-	if (BoxInFrustum(BB) == PositionInFrustum::INSIDE) {
+	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
+	if (mesh) {
+		PositionInFrustum position = BoxInFrustum(BB);
+		if (position == PositionInFrustum::INSIDE /*|| position == PositionInFrustum::INTERSECT*/) {
+			RenderComposite(m_modelMatrix);
+			BB.ModelMatrix = m_modelMatrix;
+			BB.Render();
+			ObjectsRendered++;
+		}
+	}
+	else {
 		RenderComposite(m_modelMatrix);
-		BB.ModelMatrix = m_modelMatrix;
-		BB.Render();
-		ObjectsRendered++;
+		//ObjectsRendered++;
 	}
 
 	for (size_t i = 0; i < _components.size(); i++)
@@ -184,7 +192,6 @@ void Composite::TransformBB()
 		bb.Refresh();
 		BB = bb.Transform(mesh->GetModelMatrix());
 	}
-	else return;
 
 	//then we change our children
 	for (size_t i = 0; i < _components.size(); i++)

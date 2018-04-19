@@ -6,30 +6,42 @@
 
 
 BoundingBox::BoundingBox() : xMin(+10000000), yMin(+10000000), zMin(+10000000),
-xMax(-10000000), yMax(-10000000), zMax(-10000000)//, _shader(NULL)
+xMax(-10000000), yMax(-10000000), zMax(-10000000), _shader(NULL)
 {
-	//Display::Instance();
-	//	std::vector<unsigned int> indices = {
-	//		0, 1, 2, 3, 7, 1, 5, 4, 7, 6, 2, 4, 0, 1
-	//	};
-	//	_numIndices = indices.size();
-	//	glGenVertexArrays(1, &_vertexArrayObject);
-	//	glBindVertexArray(_vertexArrayObject);
-	//	glGenBuffers(NUM_BUFFERS, _vertexArrayBuffers);
+	Display::Instance();
+		std::vector<unsigned int> indices = {
+			0, 1, 2, 3, 7, 1, 5, 4, 7, 6, 2, 4, 0, 1
+		};
+		_numIndices = indices.size();
+		glGenVertexArrays(1, &_vertexArrayObject);
+		glBindVertexArray(_vertexArrayObject);
+		glGenBuffers(NUM_BUFFERS, _vertexArrayBuffers);
 
-	//	//positions buffer
-	//	glBindBuffer(GL_ARRAY_BUFFER, _vertexArrayBuffers[0]);
-	//	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * 8, &vertices[0], GL_STATIC_DRAW);
-	//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	//	glEnableVertexAttribArray(0);
+		//positions buffer
+		glBindBuffer(GL_ARRAY_BUFFER, _vertexArrayBuffers[0]);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * 8, &vertices[0], GL_STATIC_DRAW);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(0);
 
-	//	//indexes buffer
-	//	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vertexArrayBuffers[1]);
-	//	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
+		//indexes buffer
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vertexArrayBuffers[1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
-	//	glBindVertexArray(0);
+		glBindVertexArray(0);
 
-	//	_shader = new Shader("../res/basicShader.vs", "../res/basicShader.fs");
+		_shader = new Shader("../res/basicShader.vs", "../res/basicShader.fs");
+}
+
+BoundingBox::BoundingBox(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax)
+{
+	vertices[0] = glm::vec3(xMax, yMax, zMin);
+	vertices[1] = glm::vec3(xMin, yMax, zMin);
+	vertices[2] = glm::vec3(xMax, yMin, zMin);
+	vertices[3] = glm::vec3(xMin, yMin, zMin);
+	vertices[4] = glm::vec3(xMax, yMax, zMax);
+	vertices[5] = glm::vec3(xMin, yMax, zMax);
+	vertices[6] = glm::vec3(xMax, yMin, zMax);
+	vertices[7] = glm::vec3(xMin, yMin, zMax);
 }
 
 BoundingBox::~BoundingBox()
@@ -38,8 +50,8 @@ BoundingBox::~BoundingBox()
 		delete _shader;
 		_shader = nullptr;
 	}*/
-	/*glDeleteBuffers(NUM_BUFFERS, _vertexArrayBuffers);
-	glDeleteVertexArrays(1, &_vertexArrayObject);*/
+	glDeleteBuffers(NUM_BUFFERS, _vertexArrayBuffers);
+	glDeleteVertexArrays(1, &_vertexArrayObject);
 }
 
 void BoundingBox::Refresh()
@@ -101,7 +113,7 @@ void BoundingBox::Render()
 
 	//glBindVertexArray(_vertexArrayObject);
 
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//glDrawElementsBaseVertex(GL_TRIANGLE_STRIP, _numIndices, GL_UNSIGNED_INT, 0, 0);
 	////glDrawElements(GL_TRIANGLE_STRIP, _numIndices, GL_UNSIGNED_INT, 0);
 	//glDrawArrays(GL_TRIANGLES, 0, 36);

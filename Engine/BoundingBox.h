@@ -7,6 +7,9 @@ class ENGINE_API BoundingBox
 {
 public:
 	BoundingBox();
+	BoundingBox(float xMin, float xMax,
+		float yMin, float yMax,
+		float zMin, float zMax);
 	~BoundingBox();
 	float xMin, xMax,
 		yMin, yMax,
