@@ -9,27 +9,39 @@ BoundingBox::BoundingBox() : xMin(+10000000), yMin(+10000000), zMin(+10000000),
 xMax(-10000000), yMax(-10000000), zMax(-10000000), _shader(NULL)
 {
 	Display::Instance();
-		std::vector<unsigned int> indices = {
-			0, 1, 2, 3, 7, 1, 5, 4, 7, 6, 2, 4, 0, 1
-		};
-		_numIndices = indices.size();
-		glGenVertexArrays(1, &_vertexArrayObject);
-		glBindVertexArray(_vertexArrayObject);
-		glGenBuffers(NUM_BUFFERS, _vertexArrayBuffers);
+	float verts[] = {
+		-0.5, -0.5, -0.5,
+		0.5, -0.5, -0.5,
+		0.5,  0.5, -0.5,
+		-0.5,  0.5, -0.5,
+		-0.5, -0.5,  0.5,
+		0.5, -0.5,  0.5,
+		0.5,  0.5,  0.5,
+		-0.5,  0.5,  0.5
+	};
+	std::vector<unsigned int> indices = {
+		0, 1, 2, 3,
+		4, 5, 6, 7,
+		0, 4, 1, 5, 2, 6, 3, 7
+	};
 
-		//positions buffer
-		glBindBuffer(GL_ARRAY_BUFFER, _vertexArrayBuffers[0]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices[0]) * 8, &vertices[0], GL_STATIC_DRAW);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-		glEnableVertexAttribArray(0);
+	glGenVertexArrays(1, &_vertexArrayObject);
+	glBindVertexArray(_vertexArrayObject);
+	glGenBuffers(NUM_BUFFERS, _vertexArrayBuffers);
 
-		//indexes buffer
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vertexArrayBuffers[1]);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
+	//positions buffer
+	glBindBuffer(GL_ARRAY_BUFFER, _vertexArrayBuffers[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts) * 8, verts, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
 
-		glBindVertexArray(0);
+	//indexes buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _vertexArrayBuffers[1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), &indices[0], GL_STATIC_DRAW);
 
-		_shader = new Shader("../res/basicShader.vs", "../res/basicShader.fs");
+	glBindVertexArray(0);
+
+	_shader = new Shader("../res/basicShader.vs", "../res/basicShader.fs");
 }
 
 BoundingBox::BoundingBox(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax)
@@ -78,7 +90,7 @@ BoundingBox BoundingBox::Transform(glm::mat4 mat)
 		bb.xMin = std::min(transVertex.x, bb.xMin);
 		bb.yMin = std::min(transVertex.y, bb.yMin);
 		bb.zMin = std::min(transVertex.z, bb.zMin);
-										 
+
 		bb.xMax = std::max(transVertex.x, bb.xMax);
 		bb.yMax = std::max(transVertex.y, bb.yMax);
 		bb.zMax = std::max(transVertex.z, bb.zMax);
@@ -105,13 +117,26 @@ void BoundingBox::Combine(BoundingBox otherBb)
 
 void BoundingBox::Render()
 {
-	//_shader->use();
+	glm::vec3 size = glm::vec3(xMax - xMin, yMax - yMin, zMax - zMin);
+	glm::vec3 center = glm::vec3((xMin + xMax) / 2, (yMin + yMax) / 2, (zMin + zMax) / 2);
+	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
-	//_shader->setMat4("model", ModelMatrix);
-	//_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
-	//_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
+	glm::mat4 matrix = ModelMatrix * transform;
 
-	//glBindVertexArray(_vertexArrayObject);
+	_shader->use();
+
+	_shader->setMat4("model", matrix);
+	_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
+	_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
+
+	glBindVertexArray(_vertexArrayObject);
+
+	glEnable(GL_POLYGON_OFFSET_FILL);
+	glPolygonOffset(1, 0);
+	glLineWidth(2);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (GLvoid*)(4 * sizeof(GLuint)));
+	glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, (GLvoid*)(8 * sizeof(GLuint)));
 
 	////glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	//glDrawElementsBaseVertex(GL_TRIANGLE_STRIP, _numIndices, GL_UNSIGNED_INT, 0, 0);
@@ -119,7 +144,7 @@ void BoundingBox::Render()
 	//glDrawArrays(GL_TRIANGLES, 0, 36);
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	//glBindVertexArray(0);
+	glBindVertexArray(0);
 }
 
 //void BoundingBox::operator=(BoundingBox bb)

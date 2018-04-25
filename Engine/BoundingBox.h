@@ -26,7 +26,6 @@ public:
 private:
 	glm::vec3 vertices[8];
 
-	unsigned int _numIndices;
 	static const unsigned int NUM_BUFFERS = 2;
 	GLuint _vertexArrayObject;
 	GLuint _vertexArrayBuffers[NUM_BUFFERS];
