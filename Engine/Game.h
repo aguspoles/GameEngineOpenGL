@@ -2,6 +2,7 @@
 #define GAME_H
 #include <vector>
 #include "Composite.h"
+#include <map>
 class Mesh;
 class Shader;
 class Texture;
@@ -27,7 +28,9 @@ public:
 	void AddMesh(Mesh* mesh);
 	void AddModel(Model* model);
 	void AddTexture(Texture* texture);
-	void AddShader(Shader* shader);
+	void AddShader(string name, Shader* shader);
+
+	Shader* GetShader(string name);
 
 protected:
 	Composite Root;
@@ -44,7 +47,7 @@ private:
 	float _frameCounter;
 
 	std::vector<Mesh*> m_meshes;
-	std::vector<Shader*> m_shaders;
+	std::map<string, Shader*> m_shaders;
 	std::vector<Texture*> m_textures;
 	std::vector<Model*> m_models;
 

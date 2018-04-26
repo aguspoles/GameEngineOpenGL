@@ -55,6 +55,10 @@ void Composite::Init()
 		m_worldRotation = *transform->GetRot() + parent->GetWorldRotation();
 	}
 	TransformBB();
+	if (dynamic_cast<MeshRenderer*>(this)) {
+		BBShader = new Shader("../res/basicShader");
+		BB.InitMesh();
+	}
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -84,13 +88,11 @@ void Composite::Update()
 
 void Composite::Render()
 {
-	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
-	if (mesh) {
+	if (dynamic_cast<MeshRenderer*>(this)) {
 		PositionInFrustum position = BoxInFrustum(BB);
-		if (position == PositionInFrustum::INSIDE /*|| position == PositionInFrustum::INTERSECT*/) {
+		if (position == PositionInFrustum::INSIDE || position == PositionInFrustum::INTERSECT) {
 			RenderComposite(m_modelMatrix);
-			BB.ModelMatrix = m_modelMatrix;
-			BB.Render();
+			BB.Render(BBShader);
 			ObjectsRendered++;
 		}
 	}

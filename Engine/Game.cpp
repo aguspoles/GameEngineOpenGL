@@ -30,12 +30,12 @@ Game::~Game()
 			texture = NULL;
 		}
 	}
-	for each(Shader* shader in m_shaders)
+	for each(pair<string, Shader*> shader in m_shaders)
 	{
-		if (shader)
+		if (shader.second)
 		{
-			delete shader;
-			shader = NULL;
+			delete shader.second;
+			shader.second = NULL;
 		}
 	}
 	for each(Model* model in m_models)
@@ -142,9 +142,14 @@ void Game::AddTexture(Texture * texture)
 	m_textures.push_back(texture);
 }
 
-void Game::AddShader(Shader * shader)
+void Game::AddShader(string name, Shader * shader)
 {
-	m_shaders.push_back(shader);
+	m_shaders[name] = shader;
+}
+
+Shader * Game::GetShader(string name)
+{
+	return m_shaders[name];
 }
 
 

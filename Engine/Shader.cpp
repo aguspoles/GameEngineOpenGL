@@ -1,7 +1,16 @@
 #include "stdafx.h"
 #include "Shader.h"
 
-Shader::Shader(const char * vertexPath, const char * fragmentPath)
+Shader::Shader()
+{
+}
+
+Shader::Shader(const char * path)
+{
+	LoadFromFile(path);
+}
+
+bool Shader::LoadFromFile(const std::string& path)
 {
 	// 1. retrieve the vertex/fragment source code from filePath
 	std::string vertexCode;
@@ -14,8 +23,8 @@ Shader::Shader(const char * vertexPath, const char * fragmentPath)
 	try
 	{
 		// open files
-		vShaderFile.open(vertexPath);
-		fShaderFile.open(fragmentPath);
+		vShaderFile.open(path + ".vs");
+		fShaderFile.open(path + ".fs");
 		std::stringstream vShaderStream, fShaderStream;
 		// read file's buffer contents into streams
 		vShaderStream << vShaderFile.rdbuf();
@@ -30,6 +39,7 @@ Shader::Shader(const char * vertexPath, const char * fragmentPath)
 	catch (std::ifstream::failure e)
 	{
 		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+		return false;
 	}
 	const char* vShaderCode = vertexCode.c_str();
 	const char * fShaderCode = fragmentCode.c_str();
@@ -56,6 +66,7 @@ Shader::Shader(const char * vertexPath, const char * fragmentPath)
 	// delete the shaders as they're linked into our program now and no longer necessary
 	glDeleteShader(vertex);
 	glDeleteShader(fragment);
+	return true;
 }
 
 void Shader::use()

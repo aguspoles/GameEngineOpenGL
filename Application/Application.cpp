@@ -83,25 +83,28 @@ void Application::Init() {
 	};
 
 	Model* nanosuit = new Model("../res/nanosuit/nanosuit.obj");
-	Shader* phongShader = new Shader("../res/lightShader.vs", "../res/lightShader.fs");
-	Shader* basicShader = new Shader("../res/lightSource.vs", "../res/lightSource.fs");
+
+	ShadersHolder.LoadFromFile(Assets::Shader::Phong, "../res/lightShader");
+	ShadersHolder.LoadFromFile(Assets::Shader::Basic, "../res/lightSource");
+	ShadersHolder.LoadFromFile(Assets::Shader::BB, "../res/basicShader");
 
 	Player* player = new Player;
 	player->SetModel(nanosuit);
-	player->SetShader(phongShader);
+	player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 	//test bounding box
 	BoundingBox bb = player->BB;
 
 	Enemy* p1 = new Enemy;
 	p1->SetModel(nanosuit);
-	p1->SetShader(phongShader);
+	p1->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 
 	light = new Light(lightVertices, lightIndices);
-	light->SetShader(basicShader);
+	light->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
 	light->Color = glm::vec3(1.0, 0, 0);
 
-	AddShader(phongShader);
-	AddShader(basicShader);
+	//AddShader("phong", phongShader);
+	//AddShader("lightSource", basicShader);
+	//AddShader("BB", BBShader);
 	AddModel(nanosuit);
 
 	//player->AddComponent(p1);

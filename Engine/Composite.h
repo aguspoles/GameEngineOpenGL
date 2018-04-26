@@ -39,6 +39,9 @@ public:
 	void RecalculateBB(Component* childComponent);
 	//if the BB is in frustum
 	PositionInFrustum BoxInFrustum(BoundingBox bb);
+	Shader* BBShader;
+
+	string type;
 
 protected:
 	virtual void InitComposite();

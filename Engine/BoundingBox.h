@@ -20,18 +20,17 @@ public:
 	BoundingBox Transform(glm::mat4 mat);
 	glm::vec3 Getvertex(unsigned int index) const;
 
-	void Render();
+	void InitMesh();
+	void Render(Shader* shader);
 
-	glm::mat4 ModelMatrix;
+	BoundingBox& operator = (const BoundingBox &bb);
+
 private:
 	glm::vec3 vertices[8];
 
 	static const unsigned int NUM_BUFFERS = 2;
 	GLuint _vertexArrayObject;
 	GLuint _vertexArrayBuffers[NUM_BUFFERS];
-
-	Shader* _shader;
-
 };
 
 #endif

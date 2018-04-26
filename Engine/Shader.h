@@ -12,9 +12,11 @@ class ENGINE_API Shader
 {
 public:
 	unsigned int ID;
+	Shader();
 	// constructor generates the shader on the fly
-	Shader(const char* vertexPath, const char* fragmentPath);
+	Shader(const char* path);
 
+	bool LoadFromFile(const std::string& path);
 	// activate the shader
 	void use();
 

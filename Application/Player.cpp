@@ -30,6 +30,7 @@ void Player::UpdateComposite()
 
 void Player::InitComposite()
 {
+	type = "player";
 	//gold
 	/*glUniform3f(glGetUniformLocation(m_shader->ID, "material.ambient"), 0.24725, 0.1995, 0.0745);
 	glUniform3f(glGetUniformLocation(m_shader->ID, "material.diffuse"), 0.75164, 0.60648, 0.22648);
