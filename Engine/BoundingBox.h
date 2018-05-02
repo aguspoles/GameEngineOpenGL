@@ -7,13 +7,12 @@ class ENGINE_API BoundingBox
 {
 public:
 	BoundingBox();
-	BoundingBox(float xMin, float xMax,
-		float yMin, float yMax,
-		float zMin, float zMax);
 	~BoundingBox();
+
 	float xMin, xMax,
 		yMin, yMax,
 		zMin, zMax;
+	glm::vec3 vertices[8];
 
 	void Combine(BoundingBox otherBb);
 	void Refresh();
@@ -23,10 +22,9 @@ public:
 	void InitMesh();
 	void Render(Shader* shader);
 
-	BoundingBox& operator = (const BoundingBox &bb);
+	void Set(const BoundingBox& bb);
 
 private:
-	glm::vec3 vertices[8];
 
 	static const unsigned int NUM_BUFFERS = 2;
 	GLuint _vertexArrayObject;

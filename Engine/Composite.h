@@ -34,12 +34,14 @@ public:
 	glm::vec3 GetWorldRotation();
 	vector<Component*> GetComponents();
 
+	//----------------BoundingBox------------------------
 	BoundingBox BB;
 	void TransformBB();
 	void RecalculateBB(Component* childComponent);
 	//if the BB is in frustum
 	PositionInFrustum BoxInFrustum(BoundingBox bb);
 	Shader* BBShader;
+	//----------------------------------------------------
 
 	string type;
 

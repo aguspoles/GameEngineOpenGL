@@ -19,11 +19,15 @@ void Player::UpdateComposite()
 	HandleInput();
 
 	if (m_moveLeft)
-		transform->GetPos()->x -= 5 * Time::deltaTime;
+		transform->position.x -= 5 * Time::deltaTime;
 	if (m_moveRight)
-		transform->GetPos()->x += 5 * Time::deltaTime;
+		transform->position.x += 5 * Time::deltaTime;
+	if (m_moveUp)
+		transform->position.y += 5 * Time::deltaTime;
+	if (m_moveDown)
+		transform->position.y -= 5 * Time::deltaTime;
 
-	transform->GetRot()->y = Time::GetTime() * 0.5f;
+	//transform->rotation.y = Time::GetTime() * 0.5f;
 
 	transform->UpdateModelMatrix();
 }
@@ -43,19 +47,19 @@ void Player::InitComposite()
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.ambient"), 0.0, 0.05, 0.05);
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.diffuse"), 0.4, 0.5, 0.5);
 	//glUniform3f(glGetUniformLocation(m_shader->ID, "material.specular"), 0.04, 0.7, 0.7);
-	transform->GetPos()->y = -1.0;
-	transform->GetScale()->x = 0.15;
-	transform->GetScale()->y = 0.15;
-	transform->GetScale()->z = 0.15;
+	transform->position.y = -1.0;
+	transform->scale.x = 0.10;
+	transform->scale.y = 0.10;
+	transform->scale.z = 0.10;
 	transform->UpdateModelMatrix();
 }
 
 void Player::SetShaderProperties()
 {
-	glm::vec3 lightPos = *Application::light->transform->GetPos();
+	glm::vec3 lightPos = Application::light->transform->position;
 	glm::vec3 viewPos = Camera::MainCamera->Position;
 
-	m_shader->setMat4("model", GetModelMatrix());
+	m_shader->setMat4("model", this->GetModelMatrix());
 	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
 	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
 
@@ -70,6 +74,8 @@ void Player::SetShaderProperties()
 
 void Player::HandleInput()
 {
-	m_moveLeft = TheInputHandler::Instance()->GetMouseButtonState(LEFT_CLICK);
-	m_moveRight = TheInputHandler::Instance()->GetMouseButtonState(RIGHT_CLICK);
+	m_moveLeft = TheInputHandler::Instance()->GetButtonState(LEFT_BUTTON);
+	m_moveRight = TheInputHandler::Instance()->GetButtonState(RIGHT_BUTTON);
+	m_moveUp = TheInputHandler::Instance()->GetButtonState(UP_BUTTON);
+	m_moveDown = TheInputHandler::Instance()->GetButtonState(DOWN_BUTTON);
 }

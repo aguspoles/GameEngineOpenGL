@@ -44,7 +44,6 @@ private:
 
 	const unsigned int FRAME_CAP = 60;
 	unsigned int _frames;
-	float _frameCounter;
 
 	std::vector<Mesh*> m_meshes;
 	std::map<string, Shader*> m_shaders;

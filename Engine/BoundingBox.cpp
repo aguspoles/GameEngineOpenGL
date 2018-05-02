@@ -10,18 +10,6 @@ xMax(-10000000), yMax(-10000000), zMax(-10000000)
 {
 }
 
-BoundingBox::BoundingBox(float xMin, float xMax, float yMin, float yMax, float zMin, float zMax)
-{
-	vertices[0] = glm::vec3(xMax, yMax, zMin);
-	vertices[1] = glm::vec3(xMin, yMax, zMin);
-	vertices[2] = glm::vec3(xMax, yMin, zMin);
-	vertices[3] = glm::vec3(xMin, yMin, zMin);
-	vertices[4] = glm::vec3(xMax, yMax, zMax);
-	vertices[5] = glm::vec3(xMin, yMax, zMax);
-	vertices[6] = glm::vec3(xMax, yMin, zMax);
-	vertices[7] = glm::vec3(xMin, yMin, zMax);
-}
-
 BoundingBox::~BoundingBox()
 {
 	glDeleteBuffers(NUM_BUFFERS, _vertexArrayBuffers);
@@ -79,21 +67,21 @@ void BoundingBox::Combine(BoundingBox otherBb)
 
 void BoundingBox::InitMesh()
 {
-	float verts[] = {
-		-0.5, -0.5, -0.5,
-		0.5, -0.5, -0.5,
-		0.5,  0.5, -0.5,
-		-0.5,  0.5, -0.5,
-		-0.5, -0.5,  0.5,
-		0.5, -0.5,  0.5,
-		0.5,  0.5,  0.5,
-		-0.5,  0.5,  0.5
+	const glm::vec3 verts[8] = {
+		glm::vec3(-0.5, -0.5, -0.5),
+		glm::vec3(0.5, -0.5, -0.5),
+		glm::vec3(0.5,  0.5, -0.5),
+		glm::vec3(-0.5,  0.5, -0.5),
+		glm::vec3(-0.5, -0.5,  0.5),
+		glm::vec3(0.5, -0.5,  0.5),
+		glm::vec3(0.5,  0.5,  0.5),
+		glm::vec3(-0.5,  0.5,  0.5),
 	};
-	std::vector<unsigned int> indices = {
+	const std::vector<unsigned int> indices = {
 		0, 1, 2, 3,
 		4, 5, 6, 7,
 		0, 4, 1, 5, 2, 6, 3, 7
-	};
+	};;
 
 	glGenVertexArrays(1, &_vertexArrayObject);
 	glBindVertexArray(_vertexArrayObject);
@@ -101,7 +89,7 @@ void BoundingBox::InitMesh()
 
 	//positions buffer
 	glBindBuffer(GL_ARRAY_BUFFER, _vertexArrayBuffers[0]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(verts) * 8, verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
@@ -128,7 +116,7 @@ void BoundingBox::Render(Shader* shader)
 
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1, 0);
-	glLineWidth(2);
+	//glLineWidth(2);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (GLvoid*)(4 * sizeof(GLuint)));
 	glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, (GLvoid*)(8 * sizeof(GLuint)));
@@ -136,9 +124,22 @@ void BoundingBox::Render(Shader* shader)
 	glBindVertexArray(0);
 }
 
-BoundingBox & BoundingBox::operator=(const BoundingBox & bb)
+void BoundingBox::Set(const BoundingBox & bb)
 {
-	return *this;
+	xMin = bb.xMin;
+	xMax = bb.xMax;
+	yMin = bb.yMin;
+	yMax = bb.yMax;
+	zMin = bb.zMin;
+	zMax = bb.zMax;
+	vertices[0] = bb.vertices[0];
+	vertices[1] = bb.vertices[1];
+	vertices[2] = bb.vertices[2];
+	vertices[3] = bb.vertices[3];
+	vertices[4] = bb.vertices[4];
+	vertices[5] = bb.vertices[5];
+	vertices[6] = bb.vertices[6];
+	vertices[7] = bb.vertices[7];
 }
 
 

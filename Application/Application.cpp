@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Player.h"
 #include "Enemy.h"
+#include "Platform.h"
 
 Light* Application::light = NULL;
 
@@ -31,6 +32,7 @@ void Application::Init() {
 	TheInputHandler::Instance();
 
 	Camera::MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	Camera::MainCamera->MouseSensitivity = 10;
 
 	vector<unsigned int> lightIndices = { 0, 1, 2,
 		0, 2, 3,
@@ -83,6 +85,7 @@ void Application::Init() {
 	};
 
 	Model* nanosuit = new Model("../res/nanosuit/nanosuit.obj");
+	Model* cube = new Model("../res/cube.obj");
 
 	ShadersHolder.LoadFromFile(Assets::Shader::Phong, "../res/lightShader");
 	ShadersHolder.LoadFromFile(Assets::Shader::Basic, "../res/lightSource");
@@ -91,12 +94,14 @@ void Application::Init() {
 	Player* player = new Player;
 	player->SetModel(nanosuit);
 	player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
-	//test bounding box
-	BoundingBox bb = player->BB;
 
-	Enemy* p1 = new Enemy;
-	p1->SetModel(nanosuit);
-	p1->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
+	Enemy* enemy = new Enemy;
+	enemy->SetModel(cube);
+	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
+
+	Platform* plat = new Platform;
+	plat->SetModel(cube);
+	plat->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
 
 	light = new Light(lightVertices, lightIndices);
 	light->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
@@ -107,7 +112,8 @@ void Application::Init() {
 	//AddShader("BB", BBShader);
 	AddModel(nanosuit);
 
-	//player->AddComponent(p1);
+	player->AddComponent(plat);
+	plat->AddComponent(enemy);
 	Root.AddComponent(player);
 	Root.AddComponent(light);
 }

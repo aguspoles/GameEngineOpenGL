@@ -5,13 +5,13 @@
 
 unsigned int Composite::ObjectsRendered = 0;
 
-Composite::Composite()
+Composite::Composite() : BBShader(NULL)
 {
 	transform = new Transform;
 	AddComponent(transform);
 	m_modelMatrix = transform->GetModelMatrix();
-	m_worldPosition = *transform->GetPos();
-	m_worldRotation = *transform->GetRot();
+	m_worldPosition = transform->position;
+	m_worldRotation = transform->rotation;
 }
 
 Composite::~Composite()
@@ -21,6 +21,7 @@ Composite::~Composite()
 		if (_components[i])
 			delete _components[i];
 	}
+	if (BBShader) delete BBShader;
 }
 
 void Composite::AddComponent(Component * component)
@@ -47,18 +48,19 @@ void Composite::Init()
 {
 	InitComposite();
 	m_modelMatrix = transform->GetModelMatrix();
+
 	Composite* parent = GetParent();
 	if (parent)
 	{
-		m_modelMatrix *= parent->GetModelMatrix();
-		m_worldPosition = *transform->GetPos() + parent->GetWorldPosition();
-		m_worldRotation = *transform->GetRot() + parent->GetWorldRotation();
+		m_modelMatrix = parent->GetModelMatrix() * m_modelMatrix;
+		m_worldPosition = transform->position + parent->GetWorldPosition();
+		m_worldRotation = transform->position + parent->GetWorldRotation();
 	}
-	TransformBB();
 	if (dynamic_cast<MeshRenderer*>(this)) {
 		BBShader = new Shader("../res/basicShader");
 		BB.InitMesh();
 	}
+	TransformBB();
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -74,9 +76,9 @@ void Composite::Update()
 	Composite* parent = GetParent();
 	if (parent)
 	{
-		m_modelMatrix *= parent->GetModelMatrix();
-		m_worldPosition = *transform->GetPos() + parent->GetWorldPosition();
-		m_worldRotation = *transform->GetRot() + parent->GetWorldRotation();
+		m_modelMatrix = parent->GetModelMatrix() * m_modelMatrix;
+		m_worldPosition = transform->position + parent->GetWorldPosition();
+		m_worldRotation = transform->rotation + parent->GetWorldRotation();
 	}
 	TransformBB();
 
@@ -92,13 +94,13 @@ void Composite::Render()
 		PositionInFrustum position = BoxInFrustum(BB);
 		if (position == PositionInFrustum::INSIDE || position == PositionInFrustum::INTERSECT) {
 			RenderComposite(m_modelMatrix);
+			BB.InitMesh();
 			BB.Render(BBShader);
 			ObjectsRendered++;
 		}
 	}
 	else {
 		RenderComposite(m_modelMatrix);
-		//ObjectsRendered++;
 	}
 
 	for (size_t i = 0; i < _components.size(); i++)
@@ -138,6 +140,12 @@ PositionInFrustum Composite::BoxInFrustum(BoundingBox bb)
 	unsigned int Out, In;
 	PositionInFrustum res = PositionInFrustum::INSIDE;
 	vector<Plane> planes = Camera::MainCamera->FrustumPlanes();
+	vector<glm::vec3> verts;
+	for (size_t i = 0; i < 8; i++)
+	{
+		verts.push_back(bb.vertices[i]);
+		//verts[i] = glm::vec4(bb.vertices[i], 1.0) * Camera::MainCamera->GetViewMatrix() * Camera::MainCamera->GetProjectionMatrix();
+	}
 	// for each plane do ...
 	for (size_t i = 0; i < 6; i++)
 	{
@@ -149,7 +157,7 @@ PositionInFrustum Composite::BoxInFrustum(BoundingBox bb)
 		for (size_t k = 0; k < 8 && (In == 0 || Out == 0); k++)
 		{
 			// is the corner outside or inside
-			if (planes[i].Distance(bb.Getvertex(k)) < 0)
+			if (planes[i].Distance(verts[k]) < 0)
 				Out++;
 			else
 				In++;
@@ -170,7 +178,7 @@ void Composite::RemoveBB(Component * childComponent)
 	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
 	if (mesh) {
 		BoundingBox modelBB = mesh->GetModel()->GetBoundingBox();
-		BB = modelBB;
+		BB.Set(modelBB);
 
 		for (size_t i = 0; i < _components.size(); i++) {
 			RecalculateBB(_components[i]);
@@ -192,7 +200,7 @@ void Composite::TransformBB()
 		BoundingBox modelBB = model->GetBoundingBox();
 		bb.Combine(modelBB);
 		bb.Refresh();
-		BB = bb.Transform(mesh->GetModelMatrix());
+		BB.Set(bb.Transform(mesh->GetModelMatrix()));
 	}
 
 	//then we change our children

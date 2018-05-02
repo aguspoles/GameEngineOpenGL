@@ -14,7 +14,7 @@ public:
 	unsigned int ID;
 	Shader();
 	// constructor generates the shader on the fly
-	Shader(const char* path);
+	Shader(const std::string& path);
 
 	bool LoadFromFile(const std::string& path);
 	// activate the shader

@@ -6,7 +6,7 @@
 
 bool Game::isRunning = true;
 
-Game::Game() : _frameCounter(0), _frames(0), _timeSinceLastUpdate(0)
+Game::Game() :  _frames(0), _timeSinceLastUpdate(0)
 {
 	_timePerFrame = 1.0f / FRAME_CAP;//time to render 1 frame
 	_fpsCapped = false;
@@ -58,6 +58,7 @@ void Game::Run()
 	Root.Init();
 
 	_lastFrameTime = Time::GetTime();
+	double lastTime = Time::GetTime();
 
 	while (!glfwWindowShouldClose(Display::window))
 	{
@@ -83,16 +84,19 @@ void Game::Run()
 			Update();
 			Root.Update();
 		}
-		if (_frameCounter >= Time::SECOND) {
-			_frames = 0;
-			_frameCounter = 0;
-		}
+	
 		Display::Instance()->Clear(0.0f, .0f, 0.0f, 1.0f);
 
 		Root.Render();
+
 		_frames++;
-		ShowInfo();
-	    Root.ObjectsRendered = 0;
+		double currentTime = glfwGetTime();
+		if (currentTime - lastTime >= Time::SECOND/2) {
+			ShowInfo();
+			lastTime += 1.0;
+			_frames = 0;
+		}
+		Root.ObjectsRendered = 0;
 
 		Display::Instance()->SwapBuffers();
 		glfwPollEvents();
@@ -111,7 +115,6 @@ void Game::ManageTime()
 	_lastFrameTime = _currentFrameTime;
 	_timeSinceLastUpdate += _deltaTime / Time::SECOND;
 
-	_frameCounter += _deltaTime;
 	Time::deltaTime = _deltaTime;
 }
 
@@ -122,7 +125,8 @@ void Game::SetFPSCapped(bool value)
 
 void Game::ShowInfo()
 {
-	cout << "FPS:" << _frames << endl;
+	//ms needed to render 1 frame
+	cout << "ms/frame:" << 1000.0/double(_frames) << endl;
 	cout << "Objects Rendered: " << Root.ObjectsRendered << endl;
 	cout << "--------------------" << endl;
 }

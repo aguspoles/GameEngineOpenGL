@@ -38,13 +38,13 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::mat4 Camera::GetProjectionMatrix()
 {
-	return glm::perspective(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 100.0f);
+	return glm::perspective(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
 }
 
 std::vector<Plane> Camera::FrustumPlanes()
 {
 	std::vector<Plane> res;
-	glm::mat4 viewProj =  GetProjectionMatrix() * GetViewMatrix();
+	glm::mat4 viewProj = GetViewMatrix() * GetProjectionMatrix();
 	Plane rightPlane(
 		viewProj[3][0] - viewProj[0][0],
 		viewProj[3][1] - viewProj[0][1],
@@ -108,8 +108,8 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 	yoffset *= MouseSensitivity;
 	xoffset *= MouseSensitivity;
 
-	Yaw += xoffset;
-	Pitch += yoffset;
+	Yaw += xoffset * Time::deltaTime;
+	Pitch += yoffset * Time::deltaTime;
 
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
 	if (constrainPitch)
@@ -142,10 +142,7 @@ void Camera::updateCameraVectors()
 	front.y = sin(glm::radians(Pitch));
 	front.z = sin(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 	Front = glm::normalize(front);
-	//Front = front;
 	// Also re-calculate the Right and Up vector
 	Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	Up = glm::normalize(glm::cross(Right, Front));
-	/*Right = (glm::cross(Front, WorldUp)); 
-	Up = (glm::cross(Right, Front));*/
 }

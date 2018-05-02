@@ -28,6 +28,10 @@ InputHandler::InputHandler() {
 	{
 		m_mouseButtonStates.push_back(false);
 	}
+	for (size_t i = 0; i < 4; i++)
+	{
+		m_ButtonStates.push_back(false);
+	}
 	glfwSetFramebufferSizeCallback(Display::window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(Display::window, mouse_callback);
 	glfwSetScrollCallback(Display::window, scroll_callback);
@@ -47,18 +51,31 @@ void InputHandler::Update()
 {
 	processInput(Display::window);
 	if (glfwGetKey(Display::window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		m_mouseButtonStates[RIGHT_CLICK] = true;
+		m_ButtonStates[RIGHT_BUTTON] = true;
 	if (glfwGetKey(Display::window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		m_mouseButtonStates[LEFT_CLICK] = true;
+		m_ButtonStates[LEFT_BUTTON] = true;
 	if (glfwGetKey(Display::window, GLFW_KEY_LEFT) == GLFW_RELEASE)
-		m_mouseButtonStates[LEFT_CLICK] = false;
+		m_ButtonStates[LEFT_BUTTON] = false;
 	if (glfwGetKey(Display::window, GLFW_KEY_RIGHT) == GLFW_RELEASE)
-		m_mouseButtonStates[RIGHT_CLICK] = false;
+		m_ButtonStates[RIGHT_BUTTON] = false;
+	if (glfwGetKey(Display::window, GLFW_KEY_UP) == GLFW_PRESS)
+		m_ButtonStates[UP_BUTTON] = true;
+	if (glfwGetKey(Display::window, GLFW_KEY_DOWN) == GLFW_PRESS)
+		m_ButtonStates[DOWN_BUTTON] = true;
+	if (glfwGetKey(Display::window, GLFW_KEY_UP) == GLFW_RELEASE)
+		m_ButtonStates[UP_BUTTON] = false;
+	if (glfwGetKey(Display::window, GLFW_KEY_DOWN) == GLFW_RELEASE)
+		m_ButtonStates[DOWN_BUTTON] = false;
 }
 
 bool InputHandler::GetMouseButtonState(int buttonNumber) const
 {
 	return m_mouseButtonStates[buttonNumber];
+}
+
+bool InputHandler::GetButtonState(int buttonNumber) const
+{
+	return m_ButtonStates[buttonNumber];
 }
 
 glm::vec2 InputHandler::GetMousePos() const

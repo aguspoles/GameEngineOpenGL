@@ -5,7 +5,7 @@ Shader::Shader()
 {
 }
 
-Shader::Shader(const char * path)
+Shader::Shader(const std::string& path)
 {
 	LoadFromFile(path);
 }

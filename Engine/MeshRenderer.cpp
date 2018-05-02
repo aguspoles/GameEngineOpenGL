@@ -38,11 +38,9 @@ void MeshRenderer::SetShader(Shader* shader)
 void MeshRenderer::SetModel(Model* model)
 {
 	m_model = model;
-	BoundingBox modelBB = model->GetBoundingBox();
-	BoundingBox bb;
-	bb.Combine(modelBB);
-	bb.Refresh();
-	BB = bb.Transform(transform->GetModelMatrix());
+	BoundingBox modelBB;
+	modelBB.Set(model->GetBoundingBox());
+	BB.Set(modelBB.Transform(GetModelMatrix()));
 }
 
 Shader * MeshRenderer::GetShader()

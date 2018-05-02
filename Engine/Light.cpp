@@ -35,18 +35,18 @@ Light::~Light()
 void Light::InitComposite()
 {
 	Color = glm::vec3(1.0, 1.0, 0.5);
-	transform->GetPos()->x = 1.2;
-	transform->GetPos()->y = 1.0;
-	transform->GetPos()->z = -2.0;
-	transform->GetScale()->x = 0.3;
-	transform->GetScale()->y = 0.3;
-	transform->GetScale()->z = 0.3;
+	transform->position.x = 1.2;
+	transform->position.y = 1.0;
+	transform->position.z = -2.0;
+	transform->scale.x = 0.3;
+	transform->scale.y = 0.3;
+	transform->scale.z = 0.3;
 	transform->UpdateModelMatrix();
 }
 
 void Light::UpdateComposite()
 {
-	transform->GetPos()->z = cos(Time::GetTime()) * 5;
+	transform->position.z = cos(Time::GetTime()) * 5;
 	transform->UpdateModelMatrix();
 }
 
