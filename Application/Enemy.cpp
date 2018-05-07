@@ -39,11 +39,11 @@ void Enemy::InitComposite()
 void Enemy::SetShaderProperties()
 {
 	glm::vec3 lightPos = Application::light->transform->position;
-	glm::vec3 viewPos = Camera::MainCamera->Position;
+	glm::vec3 viewPos = camera->Position;
 
 	m_shader->setMat4("model", this->GetModelMatrix());
-	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
-	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
+	m_shader->setMat4("view", camera->GetViewMatrix());
+	m_shader->setMat4("projection", camera->GetProjectionMatrix());
 
 	m_shader->setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
 	m_shader->setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);

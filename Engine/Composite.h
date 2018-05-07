@@ -16,6 +16,7 @@ public:
 
 	Transform* transform;
 	static unsigned int ObjectsRendered;
+	static bool ShowAABB;
 
 	void AddComponent(Component* component);
 	void RemoveComponent(Component* component);
@@ -39,7 +40,6 @@ public:
 	void TransformBB();
 	void RecalculateBB(Component* childComponent);
 	//if the BB is in frustum
-	PositionInFrustum BoxInFrustum(BoundingBox bb);
 	Shader* BBShader;
 	//----------------------------------------------------
 

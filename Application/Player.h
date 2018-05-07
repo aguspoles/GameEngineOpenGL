@@ -16,6 +16,6 @@ public:
 
 
 private:
-	bool m_moveLeft, m_moveRight, m_moveUp, m_moveDown;
+	bool m_moveLeft, m_moveRight, m_moveUp, m_moveDown, m_moveForward, m_moveBackward;
 };
 

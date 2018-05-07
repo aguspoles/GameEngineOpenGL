@@ -31,8 +31,10 @@ void Application::Init() {
 	//instantiate inputHandler
 	TheInputHandler::Instance();
 
-	Camera::MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	Camera::MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 6.0f));
 	Camera::MainCamera->MouseSensitivity = 10;
+
+	TheInputHandler::Instance()->camera = Camera::MainCamera;
 
 	vector<unsigned int> lightIndices = { 0, 1, 2,
 		0, 2, 3,
@@ -92,14 +94,17 @@ void Application::Init() {
 	ShadersHolder.LoadFromFile(Assets::Shader::BB, "../res/basicShader");
 
 	Player* player = new Player;
+	player->camera = Camera::MainCamera;
 	player->SetModel(nanosuit);
 	player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 
 	Enemy* enemy = new Enemy;
+	enemy->camera = Camera::MainCamera;
 	enemy->SetModel(cube);
 	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
 
 	Platform* plat = new Platform;
+	plat->camera = Camera::MainCamera;
 	plat->SetModel(cube);
 	plat->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
 
@@ -111,6 +116,7 @@ void Application::Init() {
 	//AddShader("lightSource", basicShader);
 	//AddShader("BB", BBShader);
 	AddModel(nanosuit);
+	AddModel(cube);
 
 	player->AddComponent(plat);
 	plat->AddComponent(enemy);
@@ -120,9 +126,16 @@ void Application::Init() {
 
 void Application::Update()
 {
-
+	if (TheInputHandler::Instance()->GetButtonState(AABB_BUTTON))
+		Root.ShowAABB = true;
+	else
+		Root.ShowAABB = false;
 }
 
 void Application::Render()
 {
+	if (Root.ShowAABB) {
+		Camera::MainCamera->frustum.drawPoints(&ShadersHolder.GetResource(Assets::Shader::Basic), Camera::MainCamera);
+		Camera::MainCamera->frustum.drawNormals(&ShadersHolder.GetResource(Assets::Shader::Basic), Camera::MainCamera);
+	}
 }

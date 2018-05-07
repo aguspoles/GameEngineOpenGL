@@ -6,6 +6,8 @@
 #include <glm\glm.hpp>
 #include <iostream>
 
+class Camera;
+
 enum Mouse_Buttons {
 	LEFT_CLICK = 0,
 	MIDDEL_CLICK = 1,
@@ -15,7 +17,10 @@ enum Keyboard_Buttons {
 	LEFT_BUTTON = 0,
 	RIGHT_BUTTON = 1,
 	UP_BUTTON = 2,
-	DOWN_BUTTON = 3
+	DOWN_BUTTON = 3,
+	FORWARD_BUTTON = 4,
+	BACKWARD_BUTTON = 5,
+	AABB_BUTTON = 6
 };
 
 class ENGINE_API InputHandler
@@ -30,6 +35,8 @@ public:
 	bool InputHandler::GetButtonState(int buttonNumber) const;
 	glm::vec2 GetMousePos() const;
 	glm::vec2 GetMouseWheel() const;
+
+	static Camera* camera;
 
 private:
 	InputHandler();

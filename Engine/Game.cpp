@@ -87,9 +87,11 @@ void Game::Run()
 	
 		Display::Instance()->Clear(0.0f, .0f, 0.0f, 1.0f);
 
+		Render();
 		Root.Render();
 
 		_frames++;
+		//show info once every half second
 		double currentTime = glfwGetTime();
 		if (currentTime - lastTime >= Time::SECOND/2) {
 			ShowInfo();

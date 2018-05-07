@@ -2,6 +2,7 @@
 #define BOUNDING_BOX_H
 #include <glm\glm.hpp>
 #include "Shader.h"
+class Camera;
 
 class ENGINE_API BoundingBox
 {
@@ -12,15 +13,16 @@ public:
 	float xMin, xMax,
 		yMin, yMax,
 		zMin, zMax;
-	glm::vec3 vertices[8];
+	glm::vec4 vertices[8];
 
 	void Combine(BoundingBox otherBb);
 	void Refresh();
 	BoundingBox Transform(glm::mat4 mat);
-	glm::vec3 Getvertex(unsigned int index) const;
+	glm::vec4 Getvertex(unsigned int index) const;
+	//glm::vec3 getVertexP(glm::vec3 normal);
 
 	void InitMesh();
-	void Render(Shader* shader);
+	void Render(Shader* shader, Camera* camera);
 
 	void Set(const BoundingBox& bb);
 

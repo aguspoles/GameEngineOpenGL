@@ -22,10 +22,12 @@ public:
 
 	Shader* GetShader();
 	Model* GetModel();
+	Camera* camera;
 
 protected:
 	Model* m_model;
 	Shader* m_shader;
+
 };
 
 #endif

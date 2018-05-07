@@ -5,23 +5,14 @@
 
 Camera* Camera::MainCamera = NULL;
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch) : 
-	Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
+Camera::Camera(glm::vec3 position) :
+	Front(glm::vec3(0.0f, 0.0f, -1.0f)), Up(glm::vec3(0.0f, 1.0f, 0.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
 {
 	Position = position;
-	WorldUp = up;
-	Yaw = yaw;
-	Pitch = pitch;
-	updateCameraVectors();
-}
-
-Camera::Camera(float posX, float posY, float posZ, float upX, float upY, float upZ, float yaw, float pitch) : 
-	Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVTY), Zoom(ZOOM)
-{
-	Position = glm::vec3(posX, posY, posZ);
-	WorldUp = glm::vec3(upX, upY, upZ);
-	Yaw = yaw;
-	Pitch = pitch;
+	WorldUp = Up;
+	Yaw = YAW;
+	Pitch = PITCH;
+	frustum.setCamInternals(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
 	updateCameraVectors();
 }
 
@@ -41,66 +32,23 @@ glm::mat4 Camera::GetProjectionMatrix()
 	return glm::perspective(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
 }
 
-std::vector<Plane> Camera::FrustumPlanes()
-{
-	std::vector<Plane> res;
-	glm::mat4 viewProj = GetViewMatrix() * GetProjectionMatrix();
-	Plane rightPlane(
-		viewProj[3][0] - viewProj[0][0],
-		viewProj[3][1] - viewProj[0][1],
-		viewProj[3][2] - viewProj[0][2],
-		viewProj[3][3] - viewProj[0][3]
-	);
-	res.push_back(rightPlane);
-	Plane leftPlane(
-		viewProj[3][0] + viewProj[0][0],
-		viewProj[3][1] + viewProj[0][1],
-		viewProj[3][2] + viewProj[0][2],
-		viewProj[3][3] + viewProj[0][3]
-	);
-	res.push_back(leftPlane);
-	Plane nearPlane(
-		viewProj[3][0] + viewProj[2][0],
-		viewProj[3][1] + viewProj[2][1],
-		viewProj[3][2] + viewProj[2][2],
-		viewProj[3][3] + viewProj[2][3]
-	);
-	res.push_back(nearPlane);
-	Plane farPlane(
-		viewProj[3][0] - viewProj[2][0],
-		viewProj[3][1] - viewProj[2][1],
-		viewProj[3][2] - viewProj[2][2],
-		viewProj[3][3] - viewProj[2][3]
-	);
-	res.push_back(farPlane);
-	Plane topPlane(
-		viewProj[3][0] - viewProj[1][0],
-		viewProj[3][1] - viewProj[1][1],
-		viewProj[3][2] - viewProj[1][2],
-		viewProj[3][3] - viewProj[1][3]
-	);
-	res.push_back(topPlane);
-	Plane bottomPlane(
-		viewProj[3][0] + viewProj[1][0],
-		viewProj[3][1] + viewProj[1][1],
-		viewProj[3][2] + viewProj[1][2],
-		viewProj[3][3] + viewProj[1][3]
-	);
-	res.push_back(bottomPlane);
-	return res;
-}
-
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
 {
 	float velocity = MovementSpeed * deltaTime;
-	if (direction == FORWARD)			
+	if (direction == FORWARD) {
 		Position += Front * velocity * deltaTime;
-	if (direction == BACKWARD)		   
+	}
+	if (direction == BACKWARD) {
 		Position -= Front * velocity * deltaTime;
-	if (direction == LEFT)			  
+	}
+	if (direction == LEFT) {
 		Position -= Right * velocity * deltaTime;
-	if (direction == RIGHT)			  
+	}
+	if (direction == RIGHT) {
 		Position += Right * velocity * deltaTime;
+	}
+
+	frustum.setCamDef(Position, Position + Front, Up);
 }
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
@@ -132,6 +80,8 @@ void Camera::ProcessMouseScroll(float yoffset)
 		Zoom = 1.0f;
 	if (Zoom >= 45.0f)
 		Zoom = 45.0f;
+
+	frustum.setCamInternals(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
 }
 
 void Camera::updateCameraVectors()
@@ -145,4 +95,6 @@ void Camera::updateCameraVectors()
 	// Also re-calculate the Right and Up vector
 	Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
 	Up = glm::normalize(glm::cross(Right, Front));
+
+	frustum.setCamDef(Position, Position + Front, Up);
 }

@@ -2,13 +2,14 @@
 #include "InputHandler.h"
 #include "display.h"
 #include "Time.h"
-#include "camera.h"
+#include "Camera.h"
 
 bool firstMouse = true;
 float lastX = 400;
 float lastY = 300;
 
 InputHandler* InputHandler::m_instance = nullptr;
+Camera* InputHandler::camera = NULL;
 //util functions from glfw
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -28,7 +29,7 @@ InputHandler::InputHandler() {
 	{
 		m_mouseButtonStates.push_back(false);
 	}
-	for (size_t i = 0; i < 4; i++)
+	for (size_t i = 0; i < 7; i++)
 	{
 		m_ButtonStates.push_back(false);
 	}
@@ -66,6 +67,20 @@ void InputHandler::Update()
 		m_ButtonStates[UP_BUTTON] = false;
 	if (glfwGetKey(Display::window, GLFW_KEY_DOWN) == GLFW_RELEASE)
 		m_ButtonStates[DOWN_BUTTON] = false;
+	if (glfwGetKey(Display::window, GLFW_KEY_1) == GLFW_PRESS)
+		m_ButtonStates[FORWARD_BUTTON] = true;
+	if (glfwGetKey(Display::window, GLFW_KEY_1) == GLFW_RELEASE)
+		m_ButtonStates[FORWARD_BUTTON] = false;
+	if (glfwGetKey(Display::window, GLFW_KEY_2) == GLFW_PRESS)
+		m_ButtonStates[BACKWARD_BUTTON] = true;
+	if (glfwGetKey(Display::window, GLFW_KEY_2) == GLFW_RELEASE)
+		m_ButtonStates[BACKWARD_BUTTON] = false;
+	if (glfwGetKey(Display::window, GLFW_KEY_3) == GLFW_PRESS) {
+			m_ButtonStates[AABB_BUTTON] = true;
+	}
+	if (glfwGetKey(Display::window, GLFW_KEY_4) == GLFW_PRESS) {
+		m_ButtonStates[AABB_BUTTON] = false;
+	}
 }
 
 bool InputHandler::GetMouseButtonState(int buttonNumber) const
@@ -94,15 +109,15 @@ void processInput(GLFWwindow *window)
 {
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
-
+	
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		Camera::MainCamera->ProcessKeyboard(FORWARD, Time::deltaTime);
+		InputHandler::camera->ProcessKeyboard(FORWARD, Time::deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		Camera::MainCamera->ProcessKeyboard(BACKWARD, Time::deltaTime);
+		InputHandler::camera->ProcessKeyboard(BACKWARD, Time::deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		Camera::MainCamera->ProcessKeyboard(LEFT, Time::deltaTime);
+		InputHandler::camera->ProcessKeyboard(LEFT, Time::deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		Camera::MainCamera->ProcessKeyboard(RIGHT, Time::deltaTime);
+		InputHandler::camera->ProcessKeyboard(RIGHT, Time::deltaTime);
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -131,13 +146,13 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	lastX = xpos;
 	lastY = ypos;
 
-	Camera::MainCamera->ProcessMouseMovement(xoffset, yoffset);
+	InputHandler::camera->ProcessMouseMovement(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	Camera::MainCamera->ProcessMouseScroll(yoffset);
+	InputHandler::camera->ProcessMouseScroll(yoffset);
 }
 

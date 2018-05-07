@@ -19,13 +19,17 @@ void Player::UpdateComposite()
 	HandleInput();
 
 	if (m_moveLeft)
-		transform->position.x -= 5 * Time::deltaTime;
+		transform->position.x -= 2 * Time::deltaTime;
 	if (m_moveRight)
-		transform->position.x += 5 * Time::deltaTime;
+		transform->position.x += 2 * Time::deltaTime;
 	if (m_moveUp)
 		transform->position.y += 5 * Time::deltaTime;
 	if (m_moveDown)
 		transform->position.y -= 5 * Time::deltaTime;
+	if (m_moveForward)
+		transform->position.z += 5 * Time::deltaTime;
+	if (m_moveBackward)
+		transform->position.z -= 5 * Time::deltaTime;
 
 	//transform->rotation.y = Time::GetTime() * 0.5f;
 
@@ -57,11 +61,12 @@ void Player::InitComposite()
 void Player::SetShaderProperties()
 {
 	glm::vec3 lightPos = Application::light->transform->position;
-	glm::vec3 viewPos = Camera::MainCamera->Position;
+	//glm::vec3 lightPos = glm::vec3(0);
+	glm::vec3 viewPos = camera->Position;
 
 	m_shader->setMat4("model", this->GetModelMatrix());
-	m_shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
-	m_shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
+	m_shader->setMat4("view", camera->GetViewMatrix());
+	m_shader->setMat4("projection", camera->GetProjectionMatrix());
 
 	m_shader->setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
 	m_shader->setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);
@@ -78,4 +83,6 @@ void Player::HandleInput()
 	m_moveRight = TheInputHandler::Instance()->GetButtonState(RIGHT_BUTTON);
 	m_moveUp = TheInputHandler::Instance()->GetButtonState(UP_BUTTON);
 	m_moveDown = TheInputHandler::Instance()->GetButtonState(DOWN_BUTTON);
+	m_moveForward = TheInputHandler::Instance()->GetButtonState(FORWARD_BUTTON);
+	m_moveBackward = TheInputHandler::Instance()->GetButtonState(BACKWARD_BUTTON);
 }

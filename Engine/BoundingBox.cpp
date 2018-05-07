@@ -8,6 +8,10 @@
 BoundingBox::BoundingBox() : xMin(+10000000), yMin(+10000000), zMin(+10000000),
 xMax(-10000000), yMax(-10000000), zMax(-10000000)
 {
+	for (size_t i = 0; i < 8; i++)
+	{
+		vertices[i] = { glm::vec4(0,0,0,1.0) };
+	}
 }
 
 BoundingBox::~BoundingBox()
@@ -18,14 +22,14 @@ BoundingBox::~BoundingBox()
 
 void BoundingBox::Refresh()
 {
-	vertices[0] = glm::vec3(xMax, yMax, zMin);
-	vertices[1] = glm::vec3(xMin, yMax, zMin);
-	vertices[2] = glm::vec3(xMax, yMin, zMin);
-	vertices[3] = glm::vec3(xMin, yMin, zMin);
-	vertices[4] = glm::vec3(xMax, yMax, zMax);
-	vertices[5] = glm::vec3(xMin, yMax, zMax);
-	vertices[6] = glm::vec3(xMax, yMin, zMax);
-	vertices[7] = glm::vec3(xMin, yMin, zMax);
+	vertices[0] = glm::vec4(xMax, yMax, zMin, vertices[0].w);
+	vertices[1] = glm::vec4(xMin, yMax, zMin, vertices[1].w);
+	vertices[2] = glm::vec4(xMax, yMin, zMin, vertices[2].w);
+	vertices[3] = glm::vec4(xMin, yMin, zMin, vertices[3].w);
+	vertices[4] = glm::vec4(xMax, yMax, zMax, vertices[4].w);
+	vertices[5] = glm::vec4(xMin, yMax, zMax, vertices[5].w);
+	vertices[6] = glm::vec4(xMax, yMin, zMax, vertices[6].w);
+	vertices[7] = glm::vec4(xMin, yMin, zMax, vertices[7].w);
 }
 
 BoundingBox BoundingBox::Transform(glm::mat4 mat)
@@ -34,7 +38,7 @@ BoundingBox BoundingBox::Transform(glm::mat4 mat)
 	for (int i = 0; i < 8; i++)
 	{
 		glm::vec4 transVertex;
-		glm::vec4 vertex(vertices[i], 1.0);
+		glm::vec4 vertex(vertices[i]);
 		transVertex = mat * vertex;
 
 		bb.xMin = std::min(transVertex.x, bb.xMin);
@@ -44,12 +48,14 @@ BoundingBox BoundingBox::Transform(glm::mat4 mat)
 		bb.xMax = std::max(transVertex.x, bb.xMax);
 		bb.yMax = std::max(transVertex.y, bb.yMax);
 		bb.zMax = std::max(transVertex.z, bb.zMax);
+
+		bb.vertices[i].w = transVertex.w;
 	}
 	bb.Refresh();
 	return bb;
 }
 
-glm::vec3 BoundingBox::Getvertex(unsigned int index) const
+glm::vec4 BoundingBox::Getvertex(unsigned int index) const
 {
 	return vertices[index];
 }
@@ -100,7 +106,7 @@ void BoundingBox::InitMesh()
 	glBindVertexArray(0);
 }
 
-void BoundingBox::Render(Shader* shader)
+void BoundingBox::Render(Shader* shader, Camera* camera)
 {
 	glm::vec3 size = glm::vec3(xMax - xMin, yMax - yMin, zMax - zMin);
 	glm::vec3 center = glm::vec3((xMin + xMax) / 2, (yMin + yMax) / 2, (zMin + zMax) / 2);
@@ -109,14 +115,14 @@ void BoundingBox::Render(Shader* shader)
 	shader->use();
 
 	shader->setMat4("model", transform);
-	shader->setMat4("view", Camera::MainCamera->GetViewMatrix());
-	shader->setMat4("projection", Camera::MainCamera->GetProjectionMatrix());
+	shader->setMat4("view", camera->GetViewMatrix());
+	shader->setMat4("projection", camera->GetProjectionMatrix());
 
 	glBindVertexArray(_vertexArrayObject);
 
 	glEnable(GL_POLYGON_OFFSET_FILL);
 	glPolygonOffset(1, 0);
-	//glLineWidth(2);
+	glLineWidth(2);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, 0);
 	glDrawElements(GL_LINE_LOOP, 4, GL_UNSIGNED_INT, (GLvoid*)(4 * sizeof(GLuint)));
 	glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, (GLvoid*)(8 * sizeof(GLuint)));

@@ -4,6 +4,7 @@
 #include "MeshRenderer.h"
 
 unsigned int Composite::ObjectsRendered = 0;
+bool Composite::ShowAABB = false;
 
 Composite::Composite() : BBShader(NULL)
 {
@@ -90,12 +91,15 @@ void Composite::Update()
 
 void Composite::Render()
 {
-	if (dynamic_cast<MeshRenderer*>(this)) {
-		PositionInFrustum position = BoxInFrustum(BB);
-		if (position == PositionInFrustum::INSIDE || position == PositionInFrustum::INTERSECT) {
+	MeshRenderer* mr = dynamic_cast<MeshRenderer*>(this);
+	if (mr) {
+		int posInFrustum = mr->camera->frustum.boxInFrustum(BB, mr->camera);
+		if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
 			RenderComposite(m_modelMatrix);
-			BB.InitMesh();
-			BB.Render(BBShader);
+			if (ShowAABB == true) {
+				BB.InitMesh();
+				BB.Render(BBShader, mr->camera);
+			}
 			ObjectsRendered++;
 		}
 	}
@@ -133,43 +137,6 @@ void Composite::RecalculateBB(Component* childComponent)
 	Composite* parent = GetParent();
 	if (parent)
 		parent->RecalculateBB(this);
-}
-
-PositionInFrustum Composite::BoxInFrustum(BoundingBox bb)
-{
-	unsigned int Out, In;
-	PositionInFrustum res = PositionInFrustum::INSIDE;
-	vector<Plane> planes = Camera::MainCamera->FrustumPlanes();
-	vector<glm::vec3> verts;
-	for (size_t i = 0; i < 8; i++)
-	{
-		verts.push_back(bb.vertices[i]);
-		//verts[i] = glm::vec4(bb.vertices[i], 1.0) * Camera::MainCamera->GetViewMatrix() * Camera::MainCamera->GetProjectionMatrix();
-	}
-	// for each plane do ...
-	for (size_t i = 0; i < 6; i++)
-	{
-		// reset counters for corners in and out
-		Out = In = 0;
-		// for each corner of the box do ...
-		// get out of the cycle as soon as a box as corners
-		// both inside and out of the frustum
-		for (size_t k = 0; k < 8 && (In == 0 || Out == 0); k++)
-		{
-			// is the corner outside or inside
-			if (planes[i].Distance(verts[k]) < 0)
-				Out++;
-			else
-				In++;
-		}
-		//if all corners are out
-		if (In == 0)
-			return PositionInFrustum::OUTSIDE;
-		// if some corners are out and others are in
-		else if (Out > 0)
-			res = PositionInFrustum::INTERSECT;
-	}
-	return(res);
 }
 
 void Composite::RemoveBB(Component * childComponent)
