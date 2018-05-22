@@ -12,10 +12,10 @@ void Model::Draw(Shader shader)
 		meshes[i].Draw(shader);
 }
 
-BoundingBox Model::GetBoundingBox()
-{
-	return _bb;
-}
+//BoundingBox Model::GetBoundingBox()
+//{
+//	return _bb;
+//}
 
 void Model::loadModel(string const & path)
 {
@@ -56,9 +56,11 @@ void Model::processNode(aiNode * node, const aiScene * scene)
 Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 {
 	// data to fill
+	BoundingBox bb;
 	vector<Vertex> vertices;
 	vector<unsigned int> indices;
 	vector<Texture> textures;
+	Mesh res;
 
 	// Walk through each of the mesh's vertices
 	for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -71,14 +73,13 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 		vector.z = mesh->mVertices[i].z;
 		vertex.Position = vector;
 		//set model bounding box
-		_bb.xMin = min(vector.x, _bb.xMin);
-		_bb.yMin = min(vector.y, _bb.yMin);
-		_bb.zMin = min(vector.z, _bb.zMin);
+		bb.xMin = min(vector.x, bb.xMin);
+		bb.yMin = min(vector.y, bb.yMin);
+		bb.zMin = min(vector.z, bb.zMin);
 
-		_bb.xMax = max(vector.x, _bb.xMax);
-		_bb.yMax = max(vector.y, _bb.yMax);
-		_bb.zMax = max(vector.z, _bb.zMax);
-		_bb.Refresh();
+		bb.xMax = max(vector.x, bb.xMax);
+		bb.yMax = max(vector.y, bb.yMax);
+		bb.zMax = max(vector.z, bb.zMax);
 		//-----------------------------------------------------
 		// normals
 		vector.x = mesh->mNormals[i].x;
@@ -144,7 +145,16 @@ Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)
 	textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
 
 	// return a mesh object created from the extracted mesh data
-	return Mesh(vertices, indices, textures);
+	res.vertices = vertices;
+	res.indices = indices;
+	res.textures = textures;
+	res.setUpMesh();
+
+	bb.Refresh();
+	res.BB.Set(bb);
+    res.BB.name = mesh->mName.data;
+	res.name = mesh->mName.data;
+	return res;
 }
 
 vector<Texture> Model::loadMaterialTextures(aiMaterial * mat, aiTextureType type, string typeName)

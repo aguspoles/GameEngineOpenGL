@@ -75,10 +75,10 @@ void InputHandler::Update()
 		m_ButtonStates[BACKWARD_BUTTON] = true;
 	if (glfwGetKey(Display::window, GLFW_KEY_2) == GLFW_RELEASE)
 		m_ButtonStates[BACKWARD_BUTTON] = false;
-	if (glfwGetKey(Display::window, GLFW_KEY_3) == GLFW_PRESS) {
+	if (glfwGetKey(Display::window, GLFW_KEY_KP_5) == GLFW_PRESS) {
 			m_ButtonStates[AABB_BUTTON] = true;
 	}
-	if (glfwGetKey(Display::window, GLFW_KEY_4) == GLFW_PRESS) {
+	if (glfwGetKey(Display::window, GLFW_KEY_KP_6) == GLFW_PRESS) {
 		m_ButtonStates[AABB_BUTTON] = false;
 	}
 }

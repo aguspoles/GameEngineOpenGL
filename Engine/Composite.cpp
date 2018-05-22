@@ -57,10 +57,18 @@ void Composite::Init()
 		m_worldPosition = transform->position + parent->GetWorldPosition();
 		m_worldRotation = transform->position + parent->GetWorldRotation();
 	}
-	if (dynamic_cast<MeshRenderer*>(this)) {
+	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
+	if (meshRender) {
 		BBShader = new Shader("../res/basicShader");
-		BB.InitMesh();
+		Model* model = meshRender->GetModel();
+		for (size_t i = 0; i < model->meshes.size(); i++)
+		{
+			string name = model->meshes[i].name;
+			meshesBBs[name].InitMesh();
+		}
+		allBB.InitMesh();
 	}
+
 	TransformBB();
 
 	for (size_t i = 0; i < _components.size(); i++)
@@ -93,14 +101,20 @@ void Composite::Render()
 {
 	MeshRenderer* mr = dynamic_cast<MeshRenderer*>(this);
 	if (mr) {
-		int posInFrustum = mr->camera->frustum.boxInFrustum(BB, mr->camera);
-		if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
-			RenderComposite(m_modelMatrix);
-			if (ShowAABB == true) {
-				BB.InitMesh();
-				BB.Render(BBShader, mr->camera);
+		Model* model = mr->GetModel();
+		for (size_t i = 0; i < model->meshes.size(); i++)
+		{
+			string name = model->meshes[i].name;
+			int posInFrustum = mr->camera->frustum.boxInFrustum(meshesBBs[name], mr->camera);
+			if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
+				RenderComposite(m_modelMatrix);
+				if (ShowAABB == true) {
+					meshesBBs[name].Render(BBShader, mr->camera);
+					allBB.Render(BBShader, mr->camera);
+					//cout << BBs[name].name << endl;
+				}
+				ObjectsRendered++;
 			}
-			ObjectsRendered++;
 		}
 	}
 	else {
@@ -130,8 +144,8 @@ void Composite::RecalculateBB(Component* childComponent)
 	Composite* composite = dynamic_cast<Composite*>(childComponent);
 	if (composite)
 	{
-		BB.Combine(composite->BB);
-		BB.Refresh();
+		allBB.Combine(composite->allBB);
+		allBB.Refresh();
 	}
 	//bottom-up recalculation
 	Composite* parent = GetParent();
@@ -142,7 +156,7 @@ void Composite::RecalculateBB(Component* childComponent)
 void Composite::RemoveBB(Component * childComponent)
 {
 	//if i am a meshrenderer, take the original bounding box of the model and recalculate
-	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
+	/*MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
 	if (mesh) {
 		BoundingBox modelBB = mesh->GetModel()->GetBoundingBox();
 		BB.Set(modelBB);
@@ -154,20 +168,24 @@ void Composite::RemoveBB(Component * childComponent)
 		Composite* parent = GetParent();
 		if (parent)
 			parent->RemoveBB(this);
-	}
+	}*/
 }
 
 void Composite::TransformBB()
 {
 	//first we change our BB
-	MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
+	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
 	BoundingBox bb;
-	if (mesh) {
-		Model* model = mesh->GetModel();
-		BoundingBox modelBB = model->GetBoundingBox();
-		bb.Combine(modelBB);
-		bb.Refresh();
-		BB.Set(bb.Transform(mesh->GetModelMatrix()));
+	if (meshRender) {
+		Model* model = meshRender->GetModel();
+		for (size_t i = 0; i < model->meshes.size(); i++)
+		{
+			BoundingBox meshBB = model->meshes[i].BB;
+			bb.Combine(meshBB);
+			bb.Refresh();
+			string name = meshBB.name;
+			meshesBBs[name].Set(bb.Transform(meshRender->GetModelMatrix()));
+		}
 	}
 
 	//then we change our children

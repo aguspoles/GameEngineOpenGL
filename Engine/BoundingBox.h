@@ -1,6 +1,8 @@
 #ifndef BOUNDING_BOX_H
 #define BOUNDING_BOX_H
 #include <glm\glm.hpp>
+#include <assimp/Importer.hpp>
+#include <string>
 #include "Shader.h"
 class Camera;
 
@@ -14,6 +16,8 @@ public:
 		yMin, yMax,
 		zMin, zMax;
 	glm::vec4 vertices[8];
+
+	std::string name;
 
 	void Combine(BoundingBox otherBb);
 	void Refresh();

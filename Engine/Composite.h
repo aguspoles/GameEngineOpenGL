@@ -1,6 +1,7 @@
 #ifndef COMPOSITE_H
 #define COMPOSITE_H
 #include <vector>
+#include <map>
 #include "Component.h"
 #include <glm/glm.hpp>
 #include "Transform.h"
@@ -36,7 +37,8 @@ public:
 	vector<Component*> GetComponents();
 
 	//----------------BoundingBox------------------------
-	BoundingBox BB;
+	map<string, BoundingBox> meshesBBs;
+	BoundingBox allBB;
 	void TransformBB();
 	void RecalculateBB(Component* childComponent);
 	//if the BB is in frustum

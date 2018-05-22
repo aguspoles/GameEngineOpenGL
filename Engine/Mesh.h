@@ -4,6 +4,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <assimp/Importer.hpp>
 
 #include "Shader.h"
 
@@ -12,6 +13,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include "BoundingBox.h"
 using namespace std;
 
 struct Vertex {
@@ -41,20 +43,25 @@ public:
 	vector<Texture> textures;
 	unsigned int VAO;
 
+	BoundingBox BB;
+	std::string name;
+
 	/*  Functions  */
-	// constructor
+	// constructors
 	Mesh(vector<Vertex> vertices, vector<unsigned int> indices, vector<Texture> textures);
+	Mesh();
 
 	// render the mesh
 	void Draw(Shader shader);
+
+	/*  Functions    */
+	// initializes all the buffer objects/arrays
+	void setUpMesh();
 
 private:
 	/*  Render data  */
 	unsigned int VBO, EBO;
 
-	/*  Functions    */
-	// initializes all the buffer objects/arrays
-	void setupMesh();
 		
 };
 #endif

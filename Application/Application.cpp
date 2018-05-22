@@ -87,6 +87,7 @@ void Application::Init() {
 	};
 
 	Model* nanosuit = new Model("../res/nanosuit/nanosuit.obj");
+	Model* room = new Model("../res/room.obj");
 	Model* cube = new Model("../res/cube.obj");
 
 	ShadersHolder.LoadFromFile(Assets::Shader::Phong, "../res/lightShader");
@@ -95,8 +96,8 @@ void Application::Init() {
 
 	Player* player = new Player;
 	player->camera = Camera::MainCamera;
-	player->SetModel(nanosuit);
-	player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
+	//player->SetModel(nanosuit);
+	//player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 
 	Enemy* enemy = new Enemy;
 	enemy->camera = Camera::MainCamera;
@@ -105,7 +106,7 @@ void Application::Init() {
 
 	Platform* plat = new Platform;
 	plat->camera = Camera::MainCamera;
-	plat->SetModel(cube);
+	plat->SetModel(room);
 	plat->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
 
 	light = new Light(lightVertices, lightIndices);
@@ -117,10 +118,11 @@ void Application::Init() {
 	//AddShader("BB", BBShader);
 	AddModel(nanosuit);
 	AddModel(cube);
+	AddModel(room);
 
-	player->AddComponent(plat);
-	plat->AddComponent(enemy);
-	Root.AddComponent(player);
+	//player->AddComponent(plat);
+	//plat->AddComponent(enemy);
+	Root.AddComponent(plat);
 	Root.AddComponent(light);
 }
 
@@ -135,7 +137,7 @@ void Application::Update()
 void Application::Render()
 {
 	if (Root.ShowAABB) {
-		Camera::MainCamera->frustum.drawPoints(&ShadersHolder.GetResource(Assets::Shader::Basic), Camera::MainCamera);
+		//Camera::MainCamera->frustum.drawPoints(&ShadersHolder.GetResource(Assets::Shader::Basic), Camera::MainCamera);
 		Camera::MainCamera->frustum.drawNormals(&ShadersHolder.GetResource(Assets::Shader::Basic), Camera::MainCamera);
 	}
 }

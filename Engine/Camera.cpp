@@ -12,7 +12,7 @@ Camera::Camera(glm::vec3 position) :
 	WorldUp = Up;
 	Yaw = YAW;
 	Pitch = PITCH;
-	frustum.setCamInternals(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
+	frustum.setCamInternals(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 100.0f);
 	updateCameraVectors();
 }
 
@@ -29,7 +29,7 @@ glm::mat4 Camera::GetViewMatrix()
 
 glm::mat4 Camera::GetProjectionMatrix()
 {
-	return glm::perspective(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
+	return glm::perspective(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 100.0f);
 }
 
 void Camera::ProcessKeyboard(Camera_Movement direction, float deltaTime)
@@ -62,10 +62,10 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constr
 	// Make sure that when pitch is out of bounds, screen doesn't get flipped
 	if (constrainPitch)
 	{
-		if (Pitch > 89.0f)
-			Pitch = 89.0f;
-		if (Pitch < -89.0f)
-			Pitch = -89.0f;
+		if (Pitch > 360.0f)
+			Pitch = 360.0f;
+		if (Pitch < -360.0f)
+			Pitch = -360.0f;
 	}
 
 	// Update Front, Right and Up Vectors using the updated Eular angles

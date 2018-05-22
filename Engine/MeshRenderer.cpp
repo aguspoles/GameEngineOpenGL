@@ -37,10 +37,17 @@ void MeshRenderer::SetShader(Shader* shader)
 
 void MeshRenderer::SetModel(Model* model)
 {
+	meshesBBs.clear();
 	m_model = model;
-	BoundingBox modelBB;
-	modelBB.Set(model->GetBoundingBox());
-	BB.Set(modelBB.Transform(GetModelMatrix()));
+	for (size_t i = 0; i < m_model->meshes.size(); i++)
+	{
+		string name = m_model->meshes[i].name;
+		BoundingBox meshBB;
+		meshBB.Set(m_model->meshes[i].BB);
+		allBB.Combine(meshBB);
+		meshesBBs[name].Set(meshBB.Transform(this->GetModelMatrix()));
+	}
+	allBB.Refresh();
 }
 
 Shader * MeshRenderer::GetShader()
