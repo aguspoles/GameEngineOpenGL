@@ -27,7 +27,14 @@ void MeshRenderer::RenderComposite(glm::mat4 modelMatrix)
 
 	SetShaderProperties();
 
-	m_model->Draw(*m_shader);
+	for (size_t i = 0; i < meshes.size(); i++)
+	{
+		meshes[i].Draw(*m_shader);
+	}
+}
+
+void MeshRenderer::SetShaderProperties()
+{
 }
 
 void MeshRenderer::SetShader(Shader* shader)
@@ -35,19 +42,12 @@ void MeshRenderer::SetShader(Shader* shader)
 	m_shader = shader;
 }
 
-void MeshRenderer::SetModel(Model* model)
+void MeshRenderer::SetMesh(Mesh* mesh)
 {
-	meshesBBs.clear();
-	m_model = model;
-	for (size_t i = 0; i < m_model->meshes.size(); i++)
-	{
-		string name = m_model->meshes[i].name;
-		BoundingBox meshBB;
-		meshBB.Set(m_model->meshes[i].BB);
-		allBB.Combine(meshBB);
-		meshesBBs[name].Set(meshBB.Transform(this->GetModelMatrix()));
-	}
-	allBB.Refresh();
+	/*m_mesh = mesh;
+	BoundingBox meshBB;
+	meshBB.Set(m_mesh->BB);
+    this->BB.Set(meshBB.Transform(this->GetModelMatrix()));*/
 }
 
 Shader * MeshRenderer::GetShader()
@@ -55,7 +55,3 @@ Shader * MeshRenderer::GetShader()
 	return m_shader;
 }
 
-Model * MeshRenderer::GetModel()
-{
-	return m_model;
-}

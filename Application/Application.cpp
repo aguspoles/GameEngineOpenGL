@@ -99,15 +99,15 @@ void Application::Init() {
 	//player->SetModel(nanosuit);
 	//player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 
-	Enemy* enemy = new Enemy;
+	/*Enemy* enemy = new Enemy;
 	enemy->camera = Camera::MainCamera;
-	enemy->SetModel(cube);
-	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
+	enemy->model=cube;
+	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));*/
 
 	Platform* plat = new Platform;
 	plat->camera = Camera::MainCamera;
-	plat->SetModel(room);
-	plat->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
+	plat->model = room;
+	plat->shader = (&ShadersHolder.GetResource(Assets::Shader::Basic));
 
 	light = new Light(lightVertices, lightIndices);
 	light->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));

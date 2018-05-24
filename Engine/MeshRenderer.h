@@ -2,7 +2,7 @@
 #define MESHRENDERER_H
 #include "Composite.h"
 #include "shader.h"
-#include "Model.h"
+#include "Mesh.h"
 #include <map>
 
 class ENGINE_API MeshRenderer :
@@ -15,17 +15,17 @@ public:
 	virtual void InitComposite() override;
 	virtual void UpdateComposite() override;
 	virtual void RenderComposite(glm::mat4 modelMatrix) override;
-	virtual void SetShaderProperties() = 0;
+	virtual void SetShaderProperties();
 
 	void SetShader(Shader* shader);
-	void SetModel(Model* model);
+	void SetMesh(Mesh* mesh);
 
 	Shader* GetShader();
-	Model* GetModel();
 	Camera* camera;
 
+	vector<Mesh> meshes;
+	BoundingBox BB;
 protected:
-	Model* m_model;
 	Shader* m_shader;
 
 };

@@ -37,10 +37,9 @@ public:
 	vector<Component*> GetComponents();
 
 	//----------------BoundingBox------------------------
-	map<string, BoundingBox> meshesBBs;
-	BoundingBox allBB;
-	void TransformBB();
-	void RecalculateBB(Component* childComponent);
+	BoundingBox BB;
+	//void TransformBB();
+	//void RecalculateBB(Component* childComponent);
 	//if the BB is in frustum
 	Shader* BBShader;
 	//----------------------------------------------------
@@ -60,7 +59,7 @@ private:
 	template<class T> void GetComponentsInParent(vector<T*>*);
 	template<class T> void GetComponentsInChildren(vector<T*>*);
 
-	void RemoveBB(Component* childComponent);
+	//void RemoveBB(Component* childComponent);
 };
 
 template<class T>

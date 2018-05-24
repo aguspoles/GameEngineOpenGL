@@ -1,7 +1,6 @@
 #ifndef MODEL_H
 #define MODEL_H
 #include <glad/glad.h>
-
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <stb_image.h>
@@ -9,9 +8,8 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "Mesh.h"
+#include "MeshRenderer.h"
 #include "Shader.h"
-#include "BoundingBox.h"
 
 #include <string>
 #include <fstream>
@@ -26,7 +24,8 @@ class ENGINE_API Model
 public:
 	/*  Model Data */
 	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-	vector<Mesh> meshes;
+	//vector<Mesh> meshes;
+	vector<MeshRenderer*> meshesR;
 	string directory;
 
 	/*  Functions   */
@@ -36,16 +35,13 @@ public:
 	// draws the model, and thus all its meshes
 	void Draw(Shader shader);
 
-	//BoundingBox GetBoundingBox();
-
 private:
-	//BoundingBox _bb;
 	/*  Functions   */
 	// loads a model with supported ASSIMP extensions from file and stores the resulting meshes in the meshes vector.
 	void loadModel(string const &path);
 
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-	void processNode(aiNode *node, const aiScene *scene);
+	MeshRenderer* processNode(aiNode *node, const aiScene *scene);
 
 	Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 

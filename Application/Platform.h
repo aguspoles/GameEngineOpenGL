@@ -1,7 +1,7 @@
 #pragma once
-#include "MeshRenderer.h"
+#include "ModelRenderer.h"
 
-class Platform : public MeshRenderer
+class Platform : public ModelRenderer
 {
 public:
 	Platform();
