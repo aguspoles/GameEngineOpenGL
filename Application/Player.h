@@ -1,8 +1,8 @@
 #pragma once
-#include "MeshRenderer.h"
+#include "ModelRenderer.h"
 
 class Player :
-	public MeshRenderer
+	public ModelRenderer
 {
 public:
 	Player();

@@ -3,8 +3,9 @@
 #include "Camera.h"
 
 
-MeshRenderer::MeshRenderer() : m_shader(NULL)
+MeshRenderer::MeshRenderer() : shader(NULL)
 {
+
 }
 
 
@@ -23,35 +24,12 @@ void MeshRenderer::UpdateComposite()
 
 void MeshRenderer::RenderComposite(glm::mat4 modelMatrix)
 {
-	m_shader->use();
-
-	SetShaderProperties();
+	shader->use();
 
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
-		meshes[i].Draw(*m_shader);
+		meshes[i].Draw(*shader);
 	}
 }
 
-void MeshRenderer::SetShaderProperties()
-{
-}
-
-void MeshRenderer::SetShader(Shader* shader)
-{
-	m_shader = shader;
-}
-
-void MeshRenderer::SetMesh(Mesh* mesh)
-{
-	/*m_mesh = mesh;
-	BoundingBox meshBB;
-	meshBB.Set(m_mesh->BB);
-    this->BB.Set(meshBB.Transform(this->GetModelMatrix()));*/
-}
-
-Shader * MeshRenderer::GetShader()
-{
-	return m_shader;
-}
 

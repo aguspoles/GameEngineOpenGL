@@ -15,10 +15,14 @@ public:
 	virtual void RenderComposite(glm::mat4 modelMatrix) override;
 	virtual void SetShaderProperties() = 0;
 
-	Model* model;
+	void SetModel(Model* model);
+
 	Shader * shader;
 	Camera* camera;
-protected:
+private:
+	Model* model;
+
+	void SetPropertiesInChildren(Composite* comp);
 
 };
 

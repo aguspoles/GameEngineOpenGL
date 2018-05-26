@@ -101,8 +101,8 @@ void Composite::Render()
 {
 	ModelRenderer* mr = dynamic_cast<ModelRenderer*>(this);
 	if (mr) {
-		Model* model = mr->model;
-		for (size_t i = 0; i < model->meshesR.size(); i++)
+		//Model* model = mr->model;
+		//for (size_t i = 0; i < model->meshesR.size(); i++)
 		{
 			//string name = model->meshes[i].name;
 			//int posInFrustum = mr->camera->frustum.boxInFrustum(meshesBBs[name], mr->camera);
@@ -140,19 +140,19 @@ void Composite::RenderComposite(glm::mat4 tempMatrix)
 {
 }
 
-//void Composite::RecalculateBB(Component* childComponent)
-//{
-//	Composite* composite = dynamic_cast<Composite*>(childComponent);
-//	if (composite)
-//	{
-//		allBB.Combine(composite->allBB);
-//		allBB.Refresh();
-//	}
-//	//bottom-up recalculation
-//	Composite* parent = GetParent();
-//	if (parent)
-//		parent->RecalculateBB(this);
-//}
+void Composite::RecalculateBB(Component* childComponent)
+{
+	Composite* composite = dynamic_cast<Composite*>(childComponent);
+	if (composite)
+	{
+		this->BB.Combine(composite->BB);
+		this->BB.Refresh();
+	}
+	//bottom-up recalculation
+	Composite* parent = GetParent();
+	if (parent)
+		parent->RecalculateBB(this);
+}
 //
 //void Composite::RemoveBB(Component * childComponent)
 //{

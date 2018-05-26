@@ -24,16 +24,12 @@ class ENGINE_API Model
 public:
 	/*  Model Data */
 	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-	//vector<Mesh> meshes;
-	vector<MeshRenderer*> meshesR;
+	MeshRenderer* root;
 	string directory;
 
 	/*  Functions   */
 	// constructor, expects a filepath to a 3D model.
 	Model(string const &path);
-
-	// draws the model, and thus all its meshes
-	void Draw(Shader shader);
 
 private:
 	/*  Functions   */

@@ -35,3 +35,4 @@ void Platform::SetShaderProperties()
 void Platform::HandleInput()
 {
 }
+

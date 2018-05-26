@@ -39,7 +39,7 @@ public:
 	//----------------BoundingBox------------------------
 	BoundingBox BB;
 	//void TransformBB();
-	//void RecalculateBB(Component* childComponent);
+	void RecalculateBB(Component* childComponent);
 	//if the BB is in frustum
 	Shader* BBShader;
 	//----------------------------------------------------

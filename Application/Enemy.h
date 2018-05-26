@@ -1,7 +1,7 @@
 #pragma once
-#include "MeshRenderer.h"
+#include "ModelRenderer.h"
 
-class Enemy : public MeshRenderer
+class Enemy : public ModelRenderer
 {
 public:
 	Enemy();

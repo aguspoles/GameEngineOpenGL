@@ -64,17 +64,17 @@ void Player::SetShaderProperties()
 	//glm::vec3 lightPos = glm::vec3(0);
 	glm::vec3 viewPos = camera->Position;
 
-	m_shader->setMat4("model", this->GetModelMatrix());
-	m_shader->setMat4("view", camera->GetViewMatrix());
-	m_shader->setMat4("projection", camera->GetProjectionMatrix());
+	shader->setMat4("model", this->GetModelMatrix());
+	shader->setMat4("view", camera->GetViewMatrix());
+	shader->setMat4("projection", camera->GetProjectionMatrix());
 
-	m_shader->setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
-	m_shader->setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);
+	shader->setVec3("light.position", lightPos.x, lightPos.y, lightPos.z);
+	shader->setVec3("viewPos", viewPos.x, viewPos.y, viewPos.z);
 
-	m_shader->setFloat("material.shininess", 64);
-	m_shader->setVec3("light.ambient", 1.0, 1.0, 1.0);
-	m_shader->setVec3("light.diffuse", 1.0, 1.0, 1.0);
-	m_shader->setVec3("light.specular", 1.0, 1.0, 1.0);
+	shader->setFloat("material.shininess", 64);
+	shader->setVec3("light.ambient", 1.0, 1.0, 1.0);
+	shader->setVec3("light.diffuse", 1.0, 1.0, 1.0);
+	shader->setVec3("light.specular", 1.0, 1.0, 1.0);
 }
 
 void Player::HandleInput()

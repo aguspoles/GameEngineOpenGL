@@ -12,22 +12,13 @@ public:
 	MeshRenderer();
 	virtual ~MeshRenderer();
 
-	virtual void InitComposite() override;
-	virtual void UpdateComposite() override;
-	virtual void RenderComposite(glm::mat4 modelMatrix) override;
-	virtual void SetShaderProperties();
-
-	void SetShader(Shader* shader);
-	void SetMesh(Mesh* mesh);
-
-	Shader* GetShader();
-	Camera* camera;
+	virtual void InitComposite() override final;
+	virtual void UpdateComposite() override final;
+	virtual void RenderComposite(glm::mat4 modelMatrix) override final;
 
 	vector<Mesh> meshes;
-	BoundingBox BB;
-protected:
-	Shader* m_shader;
-
+	Shader* shader;
+	Camera* camera;
 };
 
 #endif
