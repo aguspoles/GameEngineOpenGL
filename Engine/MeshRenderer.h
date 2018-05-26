@@ -16,9 +16,10 @@ public:
 	virtual void UpdateComposite() override final;
 	virtual void RenderComposite(glm::mat4 modelMatrix) override final;
 
+	void CalculateBB();
+
 	vector<Mesh> meshes;
 	Shader* shader;
-	Camera* camera;
 };
 
 #endif

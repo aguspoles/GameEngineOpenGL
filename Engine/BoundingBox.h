@@ -18,6 +18,7 @@ public:
 	glm::vec4 vertices[8];
 
 	std::string name;
+	Shader* shader;
 
 	void Combine(BoundingBox otherBb);
 	void Refresh();
@@ -26,7 +27,7 @@ public:
 	//glm::vec3 getVertexP(glm::vec3 normal);
 
 	void InitMesh();
-	void Render(Shader* shader, Camera* camera);
+	void Render(Camera* camera);
 
 	void Set(const BoundingBox& bb);
 

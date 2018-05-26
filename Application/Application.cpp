@@ -123,8 +123,9 @@ void Application::Init() {
 	//player->AddComponent(plat);
 	//plat->AddComponent(enemy);
 	Root.type = "root";
-	Root.AddComponent(plat);
+	Root.camera = Camera::MainCamera;
 	//Root.AddComponent(light);
+	Root.AddComponent(plat);
 }
 
 void Application::Update()

@@ -16,6 +16,7 @@ MeshRenderer::~MeshRenderer()
 
 void MeshRenderer::InitComposite()
 {
+	
 }
 
 void MeshRenderer::UpdateComposite()
@@ -30,6 +31,15 @@ void MeshRenderer::RenderComposite(glm::mat4 modelMatrix)
 	{
 		meshes[i].Draw(*shader);
 	}
+}
+
+void MeshRenderer::CalculateBB()
+{
+	for (size_t i = 0; i < meshes.size(); i++)
+	{
+		this->BB.Combine(meshes[i].BB);
+	}
+	this->BB.Refresh();
 }
 
 

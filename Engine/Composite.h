@@ -38,13 +38,12 @@ public:
 
 	//----------------BoundingBox------------------------
 	BoundingBox BB;
-	//void TransformBB();
+	void TransformBB();
 	void RecalculateBB(Component* childComponent);
-	//if the BB is in frustum
-	Shader* BBShader;
 	//----------------------------------------------------
 
 	string type;
+	Camera* camera;
 
 protected:
 	virtual void InitComposite();

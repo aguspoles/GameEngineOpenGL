@@ -21,7 +21,9 @@ void ModelRenderer::UpdateComposite()
 
 void ModelRenderer::RenderComposite(glm::mat4 modelMatrix)
 {
+	shader->use();
 
+	SetShaderProperties();
 }
 
 void ModelRenderer::SetModel(Model * model)

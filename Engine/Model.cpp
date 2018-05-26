@@ -40,6 +40,8 @@ MeshRenderer* Model::processNode(aiNode * node, const aiScene * scene)
 		mr->type = m.name;
 		mr->BB.name = m.name;
 	}
+	//calculate BB after all meshes pushed
+	mr->CalculateBB();
 
 	// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
