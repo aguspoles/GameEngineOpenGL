@@ -35,17 +35,14 @@ public:
 	glm::vec3 GetWorldPosition();
 	glm::vec3 GetWorldRotation();
 	vector<Component*> GetComponents();
-
-	//----------------BoundingBox------------------------
-	BoundingBox BB;
-	void TransformBB();
-	void RecalculateBB(Component* childComponent);
-	//----------------------------------------------------
+	void SetCamera(Camera* camera);
 
 	string type;
-	Camera* camera;
+	BoundingBox BB;
+	static Shader* BBshader;
 
 protected:
+	Camera* camera;
 	virtual void InitComposite();
 	virtual void UpdateComposite();
 	virtual void RenderComposite(glm::mat4 tempMatrix);
@@ -58,7 +55,12 @@ private:
 	template<class T> void GetComponentsInParent(vector<T*>*);
 	template<class T> void GetComponentsInChildren(vector<T*>*);
 
+	//----------------BoundingBox------------------------
+	void TransformBB();
+	void RecalculateBB(Component* childComponent);
 	//void RemoveBB(Component* childComponent);
+	//----------------------------------------------------
+	void SetCameraInChildren(Composite* comp);
 };
 
 template<class T>

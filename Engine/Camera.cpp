@@ -81,7 +81,7 @@ void Camera::ProcessMouseScroll(float yoffset)
 	if (Zoom >= 45.0f)
 		Zoom = 45.0f;
 
-	frustum.setCamInternals(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 10.0f);
+	frustum.setCamInternals(glm::radians(Zoom), (float)Display::SCR_WIDTH / (float)Display::SCR_HEIGHT, 0.1f, 100.0f);
 }
 
 void Camera::updateCameraVectors()

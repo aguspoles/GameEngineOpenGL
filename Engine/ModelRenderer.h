@@ -16,13 +16,14 @@ public:
 	virtual void SetShaderProperties() = 0;
 
 	void SetModel(Model* model);
+	void SetShader(Shader* shader);
 
-	Shader * shader;
+protected:
+	Model* m_model;
+	Shader * m_shader;
 
 private:
-	Model* model;
-
-	void SetPropertiesInChildren(Composite* comp);
+	void SetShaderInChildren(Composite* comp);
 
 };
 

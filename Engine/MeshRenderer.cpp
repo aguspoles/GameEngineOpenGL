@@ -27,6 +27,10 @@ void MeshRenderer::RenderComposite(glm::mat4 modelMatrix)
 {
 	shader->use();
 
+	shader->setMat4("model", this->GetModelMatrix());
+	shader->setMat4("view", camera->GetViewMatrix());
+	shader->setMat4("projection", camera->GetProjectionMatrix());
+
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
 		meshes[i].Draw(*shader);
@@ -35,11 +39,13 @@ void MeshRenderer::RenderComposite(glm::mat4 modelMatrix)
 
 void MeshRenderer::CalculateBB()
 {
+	BoundingBox bb;
 	for (size_t i = 0; i < meshes.size(); i++)
 	{
-		this->BB.Combine(meshes[i].BB);
+		bb.Combine(meshes[i].BB);
 	}
-	this->BB.Refresh();
+	bb.Refresh();
+	this->BB.Set(bb);
 }
 
 

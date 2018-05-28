@@ -11,10 +11,11 @@
 class ENGINE_API Shader
 {
 public:
-	unsigned int ID;
 	Shader();
 	// constructor generates the shader on the fly
 	Shader(const std::string& path);
+
+	unsigned int ID;
 
 	bool LoadFromFile(const std::string& path);
 	// activate the shader

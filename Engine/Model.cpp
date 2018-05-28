@@ -7,6 +7,14 @@ Model::Model(string const & path)
 	loadModel(path);
 }
 
+Model::~Model()
+{
+	if (root) {
+		delete root;
+		root = NULL;
+	}
+}
+
 void Model::loadModel(string const & path)
 {
 	// read file via ASSIMP
@@ -37,9 +45,9 @@ MeshRenderer* Model::processNode(aiNode * node, const aiScene * scene)
 
 		Mesh m = processMesh(mesh, scene);
 		mr->meshes.push_back(m);
-		mr->type = m.name;
-		mr->BB.name = m.name;
 	}
+	mr->type = node->mName.data;
+	mr->BB.name = node->mName.data;
 	//calculate BB after all meshes pushed
 	mr->CalculateBB();
 

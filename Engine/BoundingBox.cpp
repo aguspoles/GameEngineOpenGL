@@ -73,7 +73,6 @@ void BoundingBox::Combine(BoundingBox otherBb)
 
 void BoundingBox::InitMesh()
 {
-	this->shader = new Shader("../res/basicShader");
 	const glm::vec3 verts[8] = {
 		glm::vec3(-0.5, -0.5, -0.5),
 		glm::vec3(0.5, -0.5, -0.5),
@@ -107,17 +106,17 @@ void BoundingBox::InitMesh()
 	glBindVertexArray(0);
 }
 
-void BoundingBox::Render(Camera* camera)
+void BoundingBox::Render(Camera* camera, Shader* shader)
 {
 	glm::vec3 size = glm::vec3(xMax - xMin, yMax - yMin, zMax - zMin);
 	glm::vec3 center = glm::vec3((xMin + xMax) / 2, (yMin + yMax) / 2, (zMin + zMax) / 2);
 	glm::mat4 transform = glm::translate(glm::mat4(1), center) * glm::scale(glm::mat4(1), size);
 
-	this->shader->use();
+	shader->use();
 
-	this->shader->setMat4("model", transform);
-	this->shader->setMat4("view", camera->GetViewMatrix());
-	this->shader->setMat4("projection", camera->GetProjectionMatrix());
+	shader->setMat4("model", transform);
+	shader->setMat4("view", camera->GetViewMatrix());
+	shader->setMat4("projection", camera->GetProjectionMatrix());
 
 	glBindVertexArray(_vertexArrayObject);
 

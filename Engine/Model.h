@@ -30,6 +30,7 @@ public:
 	/*  Functions   */
 	// constructor, expects a filepath to a 3D model.
 	Model(string const &path);
+	~Model();
 
 private:
 	/*  Functions   */

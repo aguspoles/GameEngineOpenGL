@@ -21,26 +21,37 @@ void ModelRenderer::UpdateComposite()
 
 void ModelRenderer::RenderComposite(glm::mat4 modelMatrix)
 {
-	shader->use();
+	m_shader->use();
 
 	SetShaderProperties();
 }
 
 void ModelRenderer::SetModel(Model * model)
 {
-	this->model = model;
-	this->AddComponent(this->model->root);
-	SetPropertiesInChildren(this);
+	this->m_model = model;
+	this->AddComponent(this->m_model->root);
 }
 
-void ModelRenderer::SetPropertiesInChildren(Composite * comp)
+void ModelRenderer::SetShader(Shader * shader)
 {
-	vector<MeshRenderer*> components = comp->GetComponents<MeshRenderer>();
+	m_shader = shader;
+	SetShaderInChildren(this);
+}
+
+void ModelRenderer::SetShaderInChildren(Composite * comp)
+{
+	vector<Component*> components = comp->GetComponents();
 	for (size_t i = 0; i < components.size(); i++)
 	{
-		components[i]->shader = this->shader;
-		components[i]->camera = this->camera;
-		SetPropertiesInChildren(components[i]);
+		MeshRenderer* mr = dynamic_cast<MeshRenderer*>(components[i]);
+		ModelRenderer* mor = dynamic_cast<ModelRenderer*>(components[i]);
+		if (mr) {
+			mr->shader = this->m_shader;
+			SetShaderInChildren(mr);
+		}
+		else if (mor) {
+			mor->SetShader(this->m_shader);
+		}
 	}
 }
 

@@ -13,21 +13,20 @@ public:
 	~BoundingBox();
 
 	float xMin, xMax,
-		yMin, yMax,
-		zMin, zMax;
+		  yMin, yMax,
+		  zMin, zMax;
 	glm::vec4 vertices[8];
 
 	std::string name;
-	Shader* shader;
+	//static Shader* shader;
 
 	void Combine(BoundingBox otherBb);
 	void Refresh();
 	BoundingBox Transform(glm::mat4 mat);
 	glm::vec4 Getvertex(unsigned int index) const;
-	//glm::vec3 getVertexP(glm::vec3 normal);
 
 	void InitMesh();
-	void Render(Camera* camera);
+	void Render(Camera* camera, Shader* shader);
 
 	void Set(const BoundingBox& bb);
 

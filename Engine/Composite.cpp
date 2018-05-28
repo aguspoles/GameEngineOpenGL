@@ -5,8 +5,9 @@
 
 unsigned int Composite::ObjectsRendered = 0;
 bool Composite::ShowAABB = false;
+Shader* Composite::BBshader = NULL;
 
-Composite::Composite()
+Composite::Composite() : camera(NULL)
 {
 	transform = new Transform;
 	AddComponent(transform);
@@ -56,15 +57,30 @@ void Composite::Init()
 		m_worldPosition = transform->position + parent->GetWorldPosition();
 		m_worldRotation = transform->position + parent->GetWorldRotation();
 	}
-	
-	this->BB.InitMesh();
 
-	TransformBB();
+	if (BBshader == NULL)
+		BBshader = new Shader("../res/basicShader");
+	this->BB.InitMesh();
+	//first we change our BB
+	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
+	if (meshRender) {
+		BoundingBox bb;
+		//recalculate BB base on our original meshes BBs
+		meshRender->CalculateBB();
+		bb.Set(meshRender->BB);
+		meshRender->BB.Set(bb.Transform(m_modelMatrix));
+	}
+	else {
+		this->BB.Set(this->BB.Transform(m_modelMatrix));
+	}
+	/*if (GetParent())
+		GetParent()->RecalculateBB(this);*/
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
 		_components[i]->Init();
 	}
+
 }
 
 void Composite::Update()
@@ -79,27 +95,43 @@ void Composite::Update()
 		m_worldPosition = transform->position + parent->GetWorldPosition();
 		m_worldRotation = transform->rotation + parent->GetWorldRotation();
 	}
-	TransformBB();
+
+	//first we change our BB
+	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
+	if (meshRender) {
+		BoundingBox bb;
+		//recalculate BB base on our original meshes BBs
+		meshRender->CalculateBB();
+		bb.Set(meshRender->BB);
+		meshRender->BB.Set(bb.Transform(m_modelMatrix));
+	}
+	else {
+		this->BB.Set(this->BB.Transform(m_modelMatrix));
+	}
+	/*if (GetParent())
+		GetParent()->RecalculateBB(this);*/
+
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
 		_components[i]->Update();
 	}
+
 }
 
 void Composite::Render()
 {
-	int posInFrustum = this->camera->frustum.boxInFrustum(this->BB, this->camera);
-	if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
-		RenderComposite(m_modelMatrix);
-		if (ShowAABB == true) {
-			//this->BB.InitMesh();
-			this->BB.Render(this->camera);
-			//cout << BBs[name].name << endl;
+	if (this->camera) {
+		int posInFrustum = this->camera->frustum.boxInFrustum(this->BB, this->camera);
+		if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
+			RenderComposite(m_modelMatrix);
+			if (ShowAABB == true) {
+				this->BB.Render(this->camera, BBshader);
+			    cout << this->type << endl;
+			}
+			ObjectsRendered++;
 		}
-		ObjectsRendered++;
 	}
-
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -124,8 +156,10 @@ void Composite::RecalculateBB(Component* childComponent)
 	Composite* composite = dynamic_cast<Composite*>(childComponent);
 	if (composite)
 	{
-		this->BB.Combine(composite->BB);
-		this->BB.Refresh();
+		BoundingBox bb;
+		bb.Combine(composite->BB);
+		bb.Refresh();
+		this->BB.Set(bb);
 	}
 	//bottom-up recalculation
 	Composite* parent = GetParent();
@@ -153,17 +187,22 @@ void Composite::RecalculateBB(Component* childComponent)
 //
 void Composite::TransformBB()
 {
+	m_modelMatrix = transform->GetModelMatrix();
+	Composite* parent = GetParent();
+	if (parent)
+		m_modelMatrix = parent->GetModelMatrix() * m_modelMatrix;
+
 	//first we change our BB
 	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
-	BoundingBox bb;
 	if (meshRender) {
+		BoundingBox bb;
 		//recalculate BB base on our original meshes BBs
 		meshRender->CalculateBB();
 		bb.Set(meshRender->BB);
-	    meshRender->BB.Set(bb.Transform(meshRender->GetModelMatrix()));
+		meshRender->BB.Set(bb.Transform(meshRender->GetModelMatrix()));
 	}
 	else {
-		
+		this->BB.Set(this->BB.Transform(m_modelMatrix));
 	}
 
 	//then we change our children
@@ -177,9 +216,9 @@ void Composite::TransformBB()
 
 	//finally we recalculate our parent's BB with ours and the recursion of RecalculateBB()
 	//do the bottom-up caculations
-	if (GetParent()) {
+	/*if (GetParent()) {
 		GetParent()->RecalculateBB(this);
-	}
+	}*/
 }
 
 glm::mat4 Composite::GetModelMatrix()
@@ -202,5 +241,21 @@ vector<Component*> Composite::GetComponents()
 	return _components;
 }
 
+void Composite::SetCamera(Camera * camera)
+{
+	this->camera = camera;
+	SetCameraInChildren(this);
+}
+
+void Composite::SetCameraInChildren(Composite * comp)
+{
+	for (size_t i = 0; i < comp->_components.size(); i++)
+	{
+		if (Composite* compos = dynamic_cast<Composite*>(comp->_components[i])) {
+			compos->camera = this->camera;
+			SetCameraInChildren(compos);
+		}
+	}
+}
 
 
