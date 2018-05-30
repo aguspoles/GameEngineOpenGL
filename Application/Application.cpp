@@ -117,14 +117,16 @@ void Application::Init() {
 	//AddModel(cube);
 	AddModel(room);
 
-	//player->AddComponent(plat);
+	player->AddComponent(enemy);
 	//plat->AddComponent(enemy);
-  Root.AddComponent(light);
+    Root.AddComponent(light);
 	//Root.AddComponent(plat);
 	//enemy->AddComponent(player);
 	Root.AddComponent(player);
 	Root.type = "root";
 	Root.SetCamera(Camera::MainCamera);
+	Root.BB.name = "root";
+	player->BB.name = "player";
 }
 
 void Application::Update()

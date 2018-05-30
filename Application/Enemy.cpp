@@ -31,8 +31,8 @@ void Enemy::InitComposite()
 	/*transform->scale.x = 0.5;
 	transform->scale.z = 0.5;
 	transform->scale.y = 4;*/
-	transform->position.y = 10;
-	transform->position.x = 5;
+	transform->position.y = 1;
+	transform->position.x = 0;
 	transform->UpdateModelMatrix();
 }
 

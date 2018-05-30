@@ -24,7 +24,7 @@ class ENGINE_API Model
 public:
 	/*  Model Data */
 	vector<Texture> textures_loaded;	// stores all the textures loaded so far, optimization to make sure textures aren't loaded more than once.
-	MeshRenderer* root;
+	Composite* root;
 	string directory;
 
 	/*  Functions   */
@@ -38,7 +38,7 @@ private:
 	void loadModel(string const &path);
 
 	// processes a node in a recursive fashion. Processes each individual mesh located at the node and repeats this process on its children nodes (if any).
-	MeshRenderer* processNode(aiNode *node, const aiScene *scene);
+	Composite* processNode(aiNode *node, const aiScene *scene);
 
 	Mesh processMesh(aiMesh *mesh, const aiScene *scene);
 

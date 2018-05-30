@@ -33,9 +33,13 @@ void Model::loadModel(string const & path)
 	root = processNode(scene->mRootNode, scene);
 }
 
-MeshRenderer* Model::processNode(aiNode * node, const aiScene * scene)
+Composite* Model::processNode(aiNode * node, const aiScene * scene)
 {
-	MeshRenderer* mr = new MeshRenderer;
+	MeshRenderer* mr = NULL;
+    Composite* comp = NULL;
+	if(node->mNumMeshes > 0)
+		mr = new MeshRenderer;
+	else comp = new Composite;
 	// process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
@@ -44,19 +48,31 @@ MeshRenderer* Model::processNode(aiNode * node, const aiScene * scene)
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
 		Mesh m = processMesh(mesh, scene);
-		mr->meshes.push_back(m);
+		if (mr)
+		    mr->meshes.push_back(m);
 	}
-	mr->type = node->mName.data;
-	mr->BB.name = node->mName.data;
-	//calculate BB after all meshes pushed
-	mr->CalculateBB();
+	if (mr) {
+		mr->type = node->mName.data;
+		mr->BB.name = node->mName.data;
+		//calculate BB after all meshes pushed
+		mr->CalculateBB();
+	}
+	else if (comp) {
+		comp->type = node->mName.data;
+		comp->BB.name = node->mName.data;
+	}
 
 	// after we've processed all of the meshes (if any) we then recursively process each of the children nodes
 	for (unsigned int i = 0; i < node->mNumChildren; i++)
 	{
-		mr->AddComponent(processNode(node->mChildren[i], scene));
+		if (mr)
+		    mr->AddComponent(processNode(node->mChildren[i], scene));
+		else if(comp)
+			comp->AddComponent(processNode(node->mChildren[i], scene));
 	}
-	return mr;
+	if (mr)
+	    return mr;
+	else return comp;
 }
 
 Mesh Model::processMesh(aiMesh * mesh, const aiScene * scene)

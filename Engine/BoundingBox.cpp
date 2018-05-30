@@ -117,6 +117,9 @@ void BoundingBox::Render(Camera* camera, Shader* shader)
 	shader->setMat4("model", transform);
 	shader->setMat4("view", camera->GetViewMatrix());
 	shader->setMat4("projection", camera->GetProjectionMatrix());
+	if (this->name == "player")
+		shader->setVec3("color", 1.0, 0, 0);
+	else shader->setVec3("color", 1.0, 1.0, 1.0);
 
 	glBindVertexArray(_vertexArrayObject);
 
@@ -128,6 +131,9 @@ void BoundingBox::Render(Camera* camera, Shader* shader)
 	glDrawElements(GL_LINES, 8, GL_UNSIGNED_INT, (GLvoid*)(8 * sizeof(GLuint)));
 
 	glBindVertexArray(0);
+
+	glDeleteBuffers(NUM_BUFFERS, _vertexArrayBuffers);
+	glDeleteVertexArrays(1, &_vertexArrayObject);
 }
 
 void BoundingBox::Set(const BoundingBox & bb)
@@ -147,5 +153,6 @@ void BoundingBox::Set(const BoundingBox & bb)
 	vertices[6] = bb.vertices[6];
 	vertices[7] = bb.vertices[7];
 }
+
 
 

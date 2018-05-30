@@ -45,6 +45,7 @@ void ModelRenderer::SetShaderInChildren(Composite * comp)
 	{
 		MeshRenderer* mr = dynamic_cast<MeshRenderer*>(components[i]);
 		ModelRenderer* mor = dynamic_cast<ModelRenderer*>(components[i]);
+		Composite* composite = dynamic_cast<Composite*>(components[i]);
 		if (mr) {
 			mr->shader = this->m_shader;
 			SetShaderInChildren(mr);
@@ -52,6 +53,7 @@ void ModelRenderer::SetShaderInChildren(Composite * comp)
 		else if (mor) {
 			mor->SetShader(this->m_shader);
 		}
+		else if(composite) SetShaderInChildren(composite);
 	}
 }
 

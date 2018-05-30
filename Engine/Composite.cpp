@@ -61,6 +61,7 @@ void Composite::Init()
 	if (BBshader == NULL)
 		BBshader = new Shader("../res/basicShader");
 	this->BB.InitMesh();
+
 	//first we change our BB
 	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
 	if (meshRender) {
@@ -73,8 +74,8 @@ void Composite::Init()
 	else {
 		this->BB.Set(this->BB.Transform(m_modelMatrix));
 	}
-	/*if (GetParent())
-		GetParent()->RecalculateBB(this);*/
+	if (GetParent())
+		GetParent()->RecalculateBB(this);
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -108,8 +109,8 @@ void Composite::Update()
 	else {
 		this->BB.Set(this->BB.Transform(m_modelMatrix));
 	}
-	/*if (GetParent())
-		GetParent()->RecalculateBB(this);*/
+	if (GetParent())
+		GetParent()->RecalculateBB(this);
 
 
 	for (size_t i = 0; i < _components.size(); i++)
@@ -126,6 +127,7 @@ void Composite::Render()
 		if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
 			RenderComposite(m_modelMatrix);
 			if (ShowAABB == true) {
+				this->BB.InitMesh();
 				this->BB.Render(this->camera, BBshader);
 			    cout << this->type << endl;
 			}
@@ -156,10 +158,8 @@ void Composite::RecalculateBB(Component* childComponent)
 	Composite* composite = dynamic_cast<Composite*>(childComponent);
 	if (composite)
 	{
-		BoundingBox bb;
-		bb.Combine(composite->BB);
-		bb.Refresh();
-		this->BB.Set(bb);
+		this->BB.Combine(composite->BB);
+		this->BB.Refresh();
 	}
 	//bottom-up recalculation
 	Composite* parent = GetParent();
