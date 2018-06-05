@@ -86,21 +86,21 @@ void Application::Init() {
 		glm::vec3(1, 1, -1)
 	};
 
-	Model* nanosuit = new Model("../res/nanosuit/nanosuit.obj");
+	//Model* nanosuit = new Model("../res/nanosuit/nanosuit.obj");
 	Model* room = new Model("../res/room.obj");
-	Model* cube = new Model("../res/cube.obj");
+	//Model* cube = new Model("../res/cube.obj");
 
 	ShadersHolder.LoadFromFile(Assets::Shader::Phong, "../res/lightShader");
 	ShadersHolder.LoadFromFile(Assets::Shader::Basic, "../res/lightSource");
 	ShadersHolder.LoadFromFile(Assets::Shader::BB, "../res/basicShader");
 
 	Player* player = new Player;
-	player->SetModel(nanosuit);
+	player->SetModel(room);
 	player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 
-	Enemy* enemy = new Enemy;
+	/*Enemy* enemy = new Enemy;
 	enemy->SetModel(cube);
-	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
+	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));*/
 
 	Platform* plat = new Platform();
 	plat->SetModel(room);
@@ -113,16 +113,16 @@ void Application::Init() {
 	//AddShader("phong", phongShader);
 	//AddShader("lightSource", basicShader);
 	//AddShader("BB", BBShader);
-	AddModel(nanosuit);
+	//AddModel(nanosuit);
 	//AddModel(cube);
 	AddModel(room);
 
-	player->AddComponent(enemy);
+	//player->AddComponent(enemy);
 	//plat->AddComponent(enemy);
     Root.AddComponent(light);
-	//Root.AddComponent(plat);
+	Root.AddComponent(plat);
 	//enemy->AddComponent(player);
-	Root.AddComponent(player);
+	//Root.AddComponent(player);
 	Root.type = "root";
 	Root.SetCamera(Camera::MainCamera);
 	Root.BB.name = "root";

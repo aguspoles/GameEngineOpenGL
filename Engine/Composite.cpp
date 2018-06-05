@@ -41,8 +41,6 @@ void Composite::RemoveComponent(Component * component)
 			_components.erase(_components.begin() + i);
 		}
 	}
-
-	//RemoveBB(component);
 }
 
 void Composite::Init()
@@ -62,20 +60,7 @@ void Composite::Init()
 		BBshader = new Shader("../res/basicShader");
 	this->BB.InitMesh();
 
-	//first we change our BB
-	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
-	if (meshRender) {
-		BoundingBox bb;
-		//recalculate BB base on our original meshes BBs
-		meshRender->CalculateBB();
-		bb.Set(meshRender->BB);
-		meshRender->BB.Set(bb.Transform(m_modelMatrix));
-	}
-	else {
-		this->BB.Set(this->BB.Transform(m_modelMatrix));
-	}
-	if (GetParent())
-		GetParent()->RecalculateBB(this);
+	TransformBB();
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -97,21 +82,7 @@ void Composite::Update()
 		m_worldRotation = transform->rotation + parent->GetWorldRotation();
 	}
 
-	//first we change our BB
-	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
-	if (meshRender) {
-		BoundingBox bb;
-		//recalculate BB base on our original meshes BBs
-		meshRender->CalculateBB();
-		bb.Set(meshRender->BB);
-		meshRender->BB.Set(bb.Transform(m_modelMatrix));
-	}
-	else {
-		this->BB.Set(this->BB.Transform(m_modelMatrix));
-	}
-	if (GetParent())
-		GetParent()->RecalculateBB(this);
-
+	TransformBB();
 
 	for (size_t i = 0; i < _components.size(); i++)
 	{
@@ -129,9 +100,11 @@ void Composite::Render()
 			if (ShowAABB == true) {
 				this->BB.InitMesh();
 				this->BB.Render(this->camera, BBshader);
-			    cout << this->type << endl;
+				if(dynamic_cast<MeshRenderer*>(this))
+			       cout << this->type << endl;
 			}
-			ObjectsRendered++;
+			if (dynamic_cast<MeshRenderer*>(this))
+			   ObjectsRendered++;
 		}
 	}
 
@@ -166,59 +139,23 @@ void Composite::RecalculateBB(Component* childComponent)
 	if (parent)
 		parent->RecalculateBB(this);
 }
-//
-//void Composite::RemoveBB(Component * childComponent)
-//{
-//	//if i am a meshrenderer, take the original bounding box of the model and recalculate
-//	/*MeshRenderer* mesh = dynamic_cast<MeshRenderer*>(this);
-//	if (mesh) {
-//		BoundingBox modelBB = mesh->GetModel()->GetBoundingBox();
-//		BB.Set(modelBB);
-//
-//		for (size_t i = 0; i < _components.size(); i++) {
-//			RecalculateBB(_components[i]);
-//		}
-//
-//		Composite* parent = GetParent();
-//		if (parent)
-//			parent->RemoveBB(this);
-//	}*/
-//}
-//
+
 void Composite::TransformBB()
 {
-	m_modelMatrix = transform->GetModelMatrix();
-	Composite* parent = GetParent();
-	if (parent)
-		m_modelMatrix = parent->GetModelMatrix() * m_modelMatrix;
-
 	//first we change our BB
 	MeshRenderer* meshRender = dynamic_cast<MeshRenderer*>(this);
+	BoundingBox bb;
 	if (meshRender) {
-		BoundingBox bb;
 		//recalculate BB base on our original meshes BBs
 		meshRender->CalculateBB();
 		bb.Set(meshRender->BB);
-		meshRender->BB.Set(bb.Transform(meshRender->GetModelMatrix()));
+		meshRender->BB.Set(bb.Transform(m_modelMatrix));
 	}
 	else {
-		this->BB.Set(this->BB.Transform(m_modelMatrix));
+		this->BB.Set(bb.Transform(m_modelMatrix));
 	}
-
-	//then we change our children
-	for (size_t i = 0; i < _components.size(); i++)
-	{
-		Composite* comp = dynamic_cast<Composite*>(_components[i]);
-		if (comp) {
-			comp->TransformBB();
-		}
-	}
-
-	//finally we recalculate our parent's BB with ours and the recursion of RecalculateBB()
-	//do the bottom-up caculations
-	/*if (GetParent()) {
+	if (GetParent())
 		GetParent()->RecalculateBB(this);
-	}*/
 }
 
 glm::mat4 Composite::GetModelMatrix()

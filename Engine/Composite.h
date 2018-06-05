@@ -58,7 +58,6 @@ private:
 	//----------------BoundingBox------------------------
 	void TransformBB();
 	void RecalculateBB(Component* childComponent);
-	//void RemoveBB(Component* childComponent);
 	//----------------------------------------------------
 	void SetCameraInChildren(Composite* comp);
 };

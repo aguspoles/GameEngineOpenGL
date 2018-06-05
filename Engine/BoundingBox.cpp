@@ -119,7 +119,7 @@ void BoundingBox::Render(Camera* camera, Shader* shader)
 	shader->setMat4("projection", camera->GetProjectionMatrix());
 	if (this->name == "player")
 		shader->setVec3("color", 1.0, 0, 0);
-	else shader->setVec3("color", 1.0, 1.0, 1.0);
+	else shader->setVec3("color", 0.0, 1.0, 0.0);
 
 	glBindVertexArray(_vertexArrayObject);
 
