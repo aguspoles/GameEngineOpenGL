@@ -95,7 +95,7 @@ void Composite::Update()
 void Composite::Render()
 {
 	if (this->camera) {
-		/*int posInFrustum = this->camera->frustum.boxInFrustum(this->BB, this->camera);
+	/*	int posInFrustum = this->camera->frustum.boxInFrustum(this->BB, this->camera);
 		if (posInFrustum == FrustumG::INSIDE || posInFrustum == FrustumG::INTERSECT) {
 			RenderComposite(m_modelMatrix);
 			if (ShowAABB == true) {
@@ -107,16 +107,18 @@ void Composite::Render()
 			if (dynamic_cast<MeshRenderer*>(this))
 			   ObjectsRendered++;
 		}*/
-		std::vector<MeshRenderer*> objectsToBeRender = BSP::Instance()->FilterBaseOnCamera(this->camera);
+		std::vector<Composite*> objectsToBeRender = BSP::Instance()->FilterBaseOnCamera(this->camera);
 		for (size_t i = 0; i < objectsToBeRender.size(); i++)
 		{
 			if (objectsToBeRender[i] == this) {
-				if(objectsToBeRender[i]->type.find("BSP") == string::npos)
+				if (objectsToBeRender[i]->type.find("BSP") == string::npos)
+				{
 					RenderComposite(m_modelMatrix);
 
-				if (dynamic_cast<MeshRenderer*>(this))
-					ObjectsRendered++;
-				break;
+					if (dynamic_cast<MeshRenderer*>(this))
+						ObjectsRendered++;
+					break;
+				}
 			}
 		}
 		if (ShowAABB == true)

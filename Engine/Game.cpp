@@ -6,6 +6,7 @@
 #include "BSP.h"
 
 bool Game::isRunning = true;
+std::vector<Component*> Game::m_entities = {};
 
 Game::Game() :  _frames(0), _timeSinceLastUpdate(0)
 {
@@ -158,6 +159,16 @@ void Game::AddTexture(Texture * texture)
 void Game::AddShader(string name, Shader * shader)
 {
 	m_shaders[name] = shader;
+}
+
+void Game::AddEntitite(Composite * comp)
+{
+	m_entities.push_back(comp);
+}
+
+std::vector<Component*> Game::GetEntities()
+{
+	return m_entities;
 }
 
 Shader * Game::GetShader(string name)

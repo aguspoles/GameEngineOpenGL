@@ -29,6 +29,8 @@ public:
 	void AddModel(Model* model);
 	void AddTexture(Texture* texture);
 	void AddShader(string name, Shader* shader);
+	void AddEntitite(Composite* comp);
+	static std::vector<Component*> GetEntities();
 
 	Shader* GetShader(string name);
 
@@ -50,7 +52,7 @@ private:
 	std::vector<Texture*> m_textures;
 	std::vector<Model*> m_models;
 
-
+	static std::vector<Component*> m_entities;
 };
 
 #endif

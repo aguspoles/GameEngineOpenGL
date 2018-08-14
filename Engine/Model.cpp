@@ -63,7 +63,6 @@ Composite* Model::processNode(aiNode * node, const aiScene * scene)
 		if (mr = dynamic_cast<MeshRenderer*>(comp))
 		{
 			mr->meshes.push_back(m);
-			BSP::Instance()->objects.push_back(mr);
 		}
 	}
 	if (mr) {

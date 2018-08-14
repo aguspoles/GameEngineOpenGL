@@ -11,13 +11,13 @@ private:
 	static BSP * m_instance;
 	BSP();
 
-	std::vector<MeshRenderer*> GetAllMeshRenderers(std::vector<MeshRenderer*> entities);
+	void GetAllComposites(std::vector<Component*>* composites, std::vector<Composite*>& objects);
 
 public:
 	static BSP * Instance();
 	~BSP();
 	std::vector<Plane> Planes;
-	std::vector<MeshRenderer*> objects;
-	std::vector<MeshRenderer*> FilterBaseOnCamera(Camera* camera);
+	//std::vector<Composite*> objects;
+	std::vector<Composite*> FilterBaseOnCamera(Camera* camera);
 };
 
