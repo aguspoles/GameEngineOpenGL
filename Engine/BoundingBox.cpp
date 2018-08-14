@@ -154,5 +154,15 @@ void BoundingBox::Set(const BoundingBox & bb)
 	vertices[7] = bb.vertices[7];
 }
 
+glm::vec4 BoundingBox::GetMin()
+{
+	return glm::vec4(xMin, yMin, zMin, 1.0);
+}
+
+glm::vec4 BoundingBox::GetMax()
+{
+	return glm::vec4(xMax, yMax, zMax, 1.0);
+}
+
 
 

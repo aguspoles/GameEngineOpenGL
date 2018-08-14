@@ -3,6 +3,7 @@
 #include "InputHandler.h"
 #include "Time.h"
 #include "display.h"
+#include "BSP.h"
 
 bool Game::isRunning = true;
 
@@ -130,6 +131,12 @@ void Game::ShowInfo()
 	//ms needed to render 1 frame
 	cout << "ms/frame:" << 1000.0/double(_frames) << endl;
 	cout << "Objects Rendered: " << Root.ObjectsRendered << endl;
+	cout <<  "BSP planes: " << BSP::Instance()->Planes.size() << endl;
+	for (size_t i = 0; i < BSP::Instance()->Planes.size(); i++)
+	{
+		cout << "Distance plane/camera pos" << endl;
+		cout << BSP::Instance()->Planes[i].distance(Camera::MainCamera->Position) << endl;
+	}
 	cout << "--------------------" << endl;
 }
 

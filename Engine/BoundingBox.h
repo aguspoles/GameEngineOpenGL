@@ -29,6 +29,8 @@ public:
 	void Render(Camera* camera, Shader* shader);
 
 	void Set(const BoundingBox& bb);
+	glm::vec4 GetMin();
+	glm::vec4 GetMax();
 
 private:
 

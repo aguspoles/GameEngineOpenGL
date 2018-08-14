@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Model.h"
 #include "BoundingBox.h"
+#include "BSP.h"
 
 Model::Model(string const & path)
 {
@@ -40,6 +41,7 @@ Composite* Model::processNode(aiNode * node, const aiScene * scene)
 	if(node->mNumMeshes > 0)
 		comp = new MeshRenderer;
 	else comp = new Composite;
+
 	// process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
 	{
@@ -48,8 +50,21 @@ Composite* Model::processNode(aiNode * node, const aiScene * scene)
 		aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
 		Mesh m = processMesh(mesh, scene);
+		string type = node->mName.data;
+		if (type.find("BSP") != std::string::npos)
+		{
+			glm::vec3 v1 = m.vertices[0].Position;
+			glm::vec3 v2 = m.vertices[1].Position;
+			glm::vec3 v3 = m.vertices[2].Position;
+			Plane plane(v1, v2, v3);
+			BSP::Instance()->Planes.push_back(plane);
+		}
+
 		if (mr = dynamic_cast<MeshRenderer*>(comp))
-		    mr->meshes.push_back(m);
+		{
+			mr->meshes.push_back(m);
+			BSP::Instance()->objects.push_back(mr);
+		}
 	}
 	if (mr) {
 		//calculate BB after all meshes pushed

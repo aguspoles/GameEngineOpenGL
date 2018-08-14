@@ -18,11 +18,11 @@ void Platform::UpdateComposite()
 
 void Platform::InitComposite()
 {
-	transform->scale.x = 0.5;
-	transform->scale.y = 0.5;
-	transform->scale.z = 0.5;
-	//transform->position.y = -1;
-	transform->UpdateModelMatrix();
+	//transform->scale.x = 0.5;
+	//transform->scale.y = 0.5;
+	//transform->scale.z = 0.5;
+	////transform->position.y = -1;
+	//transform->UpdateModelMatrix();
 }
 
 void Platform::SetShaderProperties()
