@@ -98,9 +98,9 @@ void Application::Init() {
 	player->SetModel(nanosuit);
 	player->SetShader(&ShadersHolder.GetResource(Assets::Shader::Phong));
 
-	Enemy* enemy = new Enemy;
+	/*Enemy* enemy = new Enemy;
 	enemy->SetModel(cube);
-	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));
+	enemy->SetShader(&ShadersHolder.GetResource(Assets::Shader::Basic));*/
 
 	Platform* plat = new Platform();
 	plat->SetModel(room);
@@ -114,7 +114,7 @@ void Application::Init() {
 	//AddModel(cube);
 	AddModel(room);
 
-	player->AddComponent(enemy);
+	//player->AddComponent(enemy);
 	//plat->AddComponent(enemy);
     Root.AddComponent(light);
 	Root.AddComponent(plat);
@@ -126,7 +126,7 @@ void Application::Init() {
 	player->BB.name = "player";
 
 	AddEntitite(player);
-	AddEntitite(enemy);
+	//AddEntitite(enemy);
 	AddEntitite(plat);
 	AddEntitite(light);
 }

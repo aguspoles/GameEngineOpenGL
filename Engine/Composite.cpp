@@ -21,8 +21,8 @@ Composite::~Composite()
 {
 	for (size_t i = 0; i < _components.size(); i++)
 	{
-		if (_components[i])
-			delete _components[i];
+		//if (_components[i])
+			//delete _components[i];
 	}
 }
 

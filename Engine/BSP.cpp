@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "BSP.h"
 #include "Game.h"
+#include "InputHandler.h"
 
 BSP* BSP::m_instance = NULL;
 
@@ -34,7 +35,7 @@ BSP * BSP::Instance()
 
 std::vector<Composite*> BSP::FilterBaseOnCamera(Camera * camera)
 {
-	std::vector<Composite*> res;
+	std::vector<Composite*> res; res.clear();
 	GetAllComposites(&Game::GetEntities(), res);
 	std::vector<Composite*> objectsToFilter;
 
@@ -42,10 +43,10 @@ std::vector<Composite*> BSP::FilterBaseOnCamera(Camera * camera)
 	{
 		for (size_t j = 0; j < res.size(); j++)
 		{
-			int objectDistanceMin = Planes[i].distance(res[j]->BB.GetMin());
-			int objectDistanceMax = Planes[i].distance(res[j]->BB.GetMax());
+			float objectDistanceMin = Planes[i].distance(res[j]->BB.GetMin());
+			float objectDistanceMax = Planes[i].distance(res[j]->BB.GetMax());
 
-			int cameraDistance = Planes[i].distance(camera->Position);
+			float cameraDistance = Planes[i].distance(camera->Position);
 	
 			if(cameraDistance * objectDistanceMin > 0 || cameraDistance * objectDistanceMax > 0)
 				objectsToFilter.push_back(res[j]);
